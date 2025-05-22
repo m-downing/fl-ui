@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" x="0" y="0" viewBox="0 0 2000 2000" style="enable-background:new 0 0 512 512" xml:space="preserve" fill-rule="evenodd">
+  <g>
+    <path d="M513 900 H1487 V1100 H513 Z" fill="#22c55e" opacity="1" />
+    <path d="M900 513 H1100 V1487 H900 Z" fill="#22c55e" opacity="1" />
+    <path d="M1000 1853c-471 0-853-382-853-853s382-853 853-853 853 382 853 853-382 853-853 853zm0-153c-386 0-700-314-700-700s314-700 700-700 700 314 700 700-314 700-700 700z" fill="#22c55e" opacity="1" />
+  </g>
+</svg> 

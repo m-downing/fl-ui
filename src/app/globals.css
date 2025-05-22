@@ -1,0 +1,41 @@
+/*  src/app/globals.css  */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* All @layer utilities manual overrides removed */
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+/* Reset margins and padding */
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--background);
+  color: var(--foreground);
+  height: 100%;
+  width: 100%;
+}
+
+.data-table-scroll-container::-webkit-scrollbar {
+  width: 0px;  /* Makes the vertical scrollbar track and thumb take no space */
+  height: 8px; /* Adjust this for the desired thickness of the horizontal scrollbar.
+                   Set to 0px if you also want to hide the horizontal scrollbar track
+                   and only show the thumb on hover, but this might make it less discoverable. */
+}
+
+/* Optional: Style the horizontal scrollbar thumb for WebKit */
+.data-table-scroll-container::-webkit-scrollbar-thumb:horizontal {
+  background: #888; /* Example color for the scrollbar 'handle' */
+  border-radius: 4px;
+}
+
+/* Optional: Style the horizontal scrollbar track for WebKit */
+.data-table-scroll-container::-webkit-scrollbar-track:horizontal {
+  background: #f1f1f1; /* Example color for the area the scrollbar moves along */
+}
+
