@@ -94,7 +94,7 @@ export const PieChart: React.FC<PieChartProps> = ({
   loading = false,
   emptyState = <p>No data available for this chart.</p>,
   paddingAngle,
-  cornerRadius,
+  cornerRadius = 0, // Set default cornerRadius to 0 to remove rounding
 }) => {
   const [isInView, setIsInView] = useState(false);
   const chartRef = useRef<HTMLDivElement>(null);
@@ -145,7 +145,7 @@ export const PieChart: React.FC<PieChartProps> = ({
   let chartColors: string[];
   let currentShowLegend = true;
   let currentPaddingAngle = 0;
-  let currentCornerRadius = 0;
+  let currentCornerRadius = cornerRadius; // Use the provided cornerRadius or default to 0
 
   switch (mode) {
     case 'summary':
@@ -157,14 +157,12 @@ export const PieChart: React.FC<PieChartProps> = ({
       chartColors = chartTokens.series;
       currentShowLegend = propShowLegend !== undefined ? propShowLegend : true; // Small legend
       currentPaddingAngle = paddingAngle || 0.02; // Small gap
-      currentCornerRadius = cornerRadius || 3;
       break;
     case 'deepDive':
     default:
       chartColors = chartTokens.series;
       currentShowLegend = propShowLegend !== undefined ? propShowLegend : true; // Full legend
       currentPaddingAngle = paddingAngle || 0.04; // More prominent gap
-      currentCornerRadius = cornerRadius || 5;
       break;
   }
 
