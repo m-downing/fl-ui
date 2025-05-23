@@ -26,7 +26,7 @@ import {
   MetricCard,
   ScatterPlot
 } from '@/app/components/design-system/charts';
-import { DataTable, ColumnDef } from '@/app/components/design-system/DataTable';
+import { AGDataTable, AGColumnDef } from '@/app/components/design-system/DataTable';
 
 // Define interfaces for network data
 // interface NetworkMetric {
@@ -168,9 +168,9 @@ const latencyData = [
 ];
 
 // Column definitions for incident table
-const incidentColumns: ColumnDef<NetworkIncident>[] = [
+const incidentColumns: AGColumnDef<NetworkIncident>[] = [
   {
-    key: 'severity',
+    field: 'severity',
     title: 'Severity',
     width: 100,
     statusAccessor: (row) => {
@@ -189,17 +189,17 @@ const incidentColumns: ColumnDef<NetworkIncident>[] = [
     }
   },
   {
-    key: 'message',
+    field: 'message',
     title: 'Issue',
     width: 250,
   },
   {
-    key: 'location',
+    field: 'location',
     title: 'Location',
     width: 180,
   },
   {
-    key: 'status',
+    field: 'status',
     title: 'Status',
     width: 120,
     cellRenderer: (row) => {
@@ -220,16 +220,16 @@ const incidentColumns: ColumnDef<NetworkIncident>[] = [
     }
   },
   {
-    key: 'timestamp',
+    field: 'timestamp',
     title: 'Timestamp',
     width: 150,
   }
 ];
 
 // Column definitions for network components
-const networkComponentColumns: ColumnDef<NetworkComponent>[] = [
+const networkComponentColumns: AGColumnDef<NetworkComponent>[] = [
   {
-    key: 'name',
+    field: 'name',
     title: 'Name',
     width: 180,
     statusAccessor: (row) => {
@@ -248,7 +248,7 @@ const networkComponentColumns: ColumnDef<NetworkComponent>[] = [
     )
   },
   {
-    key: 'type',
+    field: 'type',
     title: 'Type',
     width: 140,
     cellRenderer: (row) => {
@@ -268,7 +268,7 @@ const networkComponentColumns: ColumnDef<NetworkComponent>[] = [
     }
   },
   {
-    key: 'status',
+    field: 'status',
     title: 'Status',
     width: 140,
     cellRenderer: (row) => {
@@ -303,7 +303,7 @@ const networkComponentColumns: ColumnDef<NetworkComponent>[] = [
     }
   },
   {
-    key: 'utilization',
+    field: 'utilization',
     title: 'Utilization',
     width: 140,
     cellRenderer: (row) => {
@@ -327,7 +327,7 @@ const networkComponentColumns: ColumnDef<NetworkComponent>[] = [
     }
   },
   {
-    key: 'lastUpdated',
+    field: 'lastUpdated',
     title: 'Last Updated',
     width: 150,
   }
@@ -423,7 +423,7 @@ export const NetworkView: React.FC = () => {
         <Typography variant="body2" className="text-sm text-neutral-500 mb-4">
           Active and recent network infrastructure incidents
         </Typography>
-        <DataTable 
+        <AGDataTable 
           columns={incidentColumns} 
           data={networkIncidents} 
           mode="drilldown" 
@@ -587,7 +587,7 @@ export const NetworkView: React.FC = () => {
         <Typography variant="body2" className="text-sm text-neutral-500 mb-4">
           Status of critical network infrastructure equipment
         </Typography>
-        <DataTable 
+        <AGDataTable 
           columns={networkComponentColumns} 
           data={networkComponents} 
           mode="deepDive" 

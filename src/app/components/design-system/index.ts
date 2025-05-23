@@ -7,7 +7,7 @@ export { default as Modal } from './Modal';
 export { default as Tooltip } from './Tooltip';
 export { default as Badge } from './Badge';
 export { default as TableToggle } from './TableToggle';
-export { DataTable } from './DataTable';
+export { DataTable, AGDataTable } from './DataTable';
 
 // Tokens
 export { default as colors } from './tokens/colors';
@@ -16,5 +16,5 @@ export { default as shadows } from './tokens/shadows';
 
 // Types
 export type { SelectOption } from './Select';
-export type { ColumnDef, DataTableProps } from './DataTable';
+export type { AGColumnDef as ColumnDef, AGDataTableProps as DataTableProps } from './DataTable';
 export type { TableToggleProps } from './TableToggle'; 

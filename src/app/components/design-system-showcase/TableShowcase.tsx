@@ -1,5 +1,5 @@
 import React from 'react';
-import { DataTable, ColumnDef } from '@/app/components/design-system/DataTable';
+import { DataTable, ColumnDef } from '@/app/components/design-system';
 // Assuming a Badge component might be available or needed later for full DataTable feature parity
 // import { Badge } from '@/app/components/design-system'; 
 
@@ -52,7 +52,7 @@ const sampleTableData: ServerRackActivity[] = [
 // Column Definitions
 const columns: ColumnDef<ServerRackActivity>[] = [
   {
-    key: 'operator',
+    field: 'operator',
     title: 'Operator',
     width: 220,
     statusAccessor: (row) => {
@@ -68,12 +68,12 @@ const columns: ColumnDef<ServerRackActivity>[] = [
     )
   },
   {
-    key: 'action',
+    field: 'action',
     title: 'Action',
     width: 150,
   },
   {
-    key: 'status',
+    field: 'status',
     title: 'Status',
     width: 120,
     // In a real scenario, you might use the Badge component here for 'deepDive' mode as hinted in DataTable.tsx
@@ -89,28 +89,28 @@ const columns: ColumnDef<ServerRackActivity>[] = [
     }
   },
   {
-    key: 'timestamp',
+    field: 'timestamp',
     title: 'Timestamp',
     width: 180,
   },
   {
-    key: 'capacityValue',
+    field: 'capacityValue',
     title: 'Capacity (kW)',
     width: 100,
     cellRenderer: (row) => `${row.capacityValue.toFixed(2)} kW`
   },
   {
-    key: 'rackCount',
+    field: 'rackCount',
     title: 'Rack Count',
     width: 100,
   },
   {
-    key: 'dataCenter',
+    field: 'dataCenter',
     title: 'Data Center',
     width: 150,
   },
   {
-    key: 'details',
+    field: 'details',
     title: 'Details',
     width: 300,
   },
@@ -145,7 +145,7 @@ export function TableShowcase() {
           columns={columns} 
           data={sampleTableData} 
           mode="summary" 
-          maxColumns={4} // Explicitly set for this demo
+          maxSummaryColumns={4} // Explicitly set for this demo
           maxRows={10}   // Max 10 rows visible, then scroll
           // No explicit height, DataTable will calculate based on maxRows={10}
         />

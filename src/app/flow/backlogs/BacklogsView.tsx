@@ -25,7 +25,7 @@ import {
   MetricCard,
   // ProgressTracker // Removed as it's unused
 } from '@/app/components/design-system/charts';
-import { DataTable, ColumnDef } from '@/app/components/design-system/DataTable';
+import { DataTable, ColumnDef } from '@/app/components/design-system';
 
 // Define interfaces for backlogs data
 interface BacklogItem {
@@ -191,7 +191,7 @@ const regionalBacklogs: RegionalBacklog[] = [
 // Column definitions for backlog table
 const backlogColumns: ColumnDef<BacklogItem>[] = [
   {
-    key: 'priority',
+    field: 'priority',
     title: 'Priority',
     width: 100,
     statusAccessor: (row) => {
@@ -214,7 +214,7 @@ const backlogColumns: ColumnDef<BacklogItem>[] = [
     }
   },
   {
-    key: 'dataCenter',
+    field: 'dataCenter',
     title: 'Data Center',
     width: 140,
     cellRenderer: (row) => (
@@ -225,7 +225,7 @@ const backlogColumns: ColumnDef<BacklogItem>[] = [
     )
   },
   {
-    key: 'rackType',
+    field: 'rackType',
     title: 'Equipment',
     width: 160,
     cellRenderer: (row) => (
@@ -236,12 +236,12 @@ const backlogColumns: ColumnDef<BacklogItem>[] = [
     )
   },
   {
-    key: 'quantity',
+    field: 'quantity',
     title: 'Qty',
     width: 70,
   },
   {
-    key: 'status',
+    field: 'status',
     title: 'Status',
     width: 160,
     cellRenderer: (row) => {
@@ -269,7 +269,7 @@ const backlogColumns: ColumnDef<BacklogItem>[] = [
     }
   },
   {
-    key: 'delay',
+    field: 'delay',
     title: 'Delay (days)',
     width: 120,
     cellRenderer: (row) => {
@@ -282,7 +282,7 @@ const backlogColumns: ColumnDef<BacklogItem>[] = [
     }
   },
   {
-    key: 'expectedDelivery',
+    field: 'expectedDelivery',
     title: 'Expected Delivery',
     width: 150,
   }

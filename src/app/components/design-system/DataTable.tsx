@@ -2,13 +2,12 @@ import React, { useMemo, useCallback, useRef } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { ColDef, GridApi, GridReadyEvent, ModuleRegistry } from 'ag-grid-enterprise';
 import { AllCommunityModule } from 'ag-grid-community';
-import { AllEnterpriseModule } from 'ag-grid-enterprise';
+import { AllEnterpriseModule, IntegratedChartsModule } from 'ag-grid-enterprise';
 
 // Register AG Grid modules
 ModuleRegistry.registerModules([AllCommunityModule, AllEnterpriseModule]);
 
-// Import AG Grid styles
-import 'ag-grid-community/styles/ag-grid.css';
+// Import AG Grid styles - using only theme-alpine
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import 'ag-grid-enterprise';
 
@@ -160,66 +159,41 @@ export function AGDataTable<T = any>({
     });
   }, [columns, mode, maxSummaryColumns]);
 
-  // Grid options based on mode
-  const gridOptions = useMemo(() => {
-    const baseOptions = {
-      mode, // Pass mode to grid for access in cell renderers
-      animateRows: true,
-      headerHeight: 40,
-      rowHeight: 45,
-      suppressHorizontalScroll: mode === 'summary',
-      suppressColumnVirtualisation: mode === 'summary',
-      
-      // Styling
-      rowClass: mode === 'summary' ? 'summary-row' : undefined,
-      
-      // Row selection
-      rowSelection: mode !== 'summary' ? 'multiple' as const : 'single' as const,
-      suppressRowClickSelection: !!onRowClick,
-    };
+  // Base grid options
+  const animateRows = true;
+  const headerHeight = 40;
+  const rowHeight = 45;
+  const suppressHorizontalScroll = mode === 'summary';
+  const suppressColumnVirtualisation = mode === 'summary';
+  const rowClass = mode === 'summary' ? 'summary-row' : undefined;
+  
+  // Pagination settings based on maxRows
+  const pagination = mode !== 'summary' || !!maxRows;
+  const paginationPageSize = maxRows || (mode === 'deepDive' ? 50 : 25);
+  const paginationPageSizeSelector = maxRows 
+    ? [maxRows, maxRows * 2, maxRows * 4] 
+    : (mode === 'deepDive' ? [50, 100, 200] : [25, 50, 100]);
 
-    // Common pagination options if maxRows is provided
-    const paginationOptions = maxRows ? {
-      pagination: true,
-      paginationPageSize: maxRows,
-    } : {};
-
-    switch (mode) {
-      case 'summary':
-        return {
-          ...baseOptions,
-          pagination: false,
-          suppressHorizontalScroll: true,
-          domLayout: 'autoHeight' as const,
-          ...(maxRows ? { paginationPageSize: maxRows } : {}),
-        };
-        
-      case 'drilldown':
-        return {
-          ...baseOptions,
-          pagination: true,
-          paginationPageSize: maxRows || 25,
-          paginationPageSizeSelector: [25, 50, 100],
-        };
-        
-      case 'deepDive':
-        return {
-          ...baseOptions,
-          pagination: true,
-          paginationPageSize: maxRows || 50,
-          paginationPageSizeSelector: [50, 100, 200],
-          enableRangeSelection: true,
-          enableCharts: true,
-          sideBar: {
-            toolPanels: ['columns', 'filters'],
-          },
-        };
-        
-      default:
-        return baseOptions;
+  // Additional settings based on mode
+  const domLayout = mode === 'summary' ? 'autoHeight' as const : undefined;
+  const cellSelection = mode === 'deepDive';
+  const sideBar = mode === 'deepDive' ? { toolPanels: ['columns', 'filters'] } : undefined;
+  
+  // Updated selection configuration for AG Grid v32+
+  const rowSelection = useMemo(() => {
+    if (mode === 'summary') {
+      return {
+        mode: 'singleRow' as const,
+        enableClickSelection: !onRowClick
+      };
+    } else {
+      return {
+        mode: 'multiRow' as const,
+        enableClickSelection: !onRowClick
+      };
     }
-  }, [mode, onRowClick, maxRows]);
-
+  }, [mode, onRowClick]);
+  
   const onGridReady = useCallback((params: GridReadyEvent) => {
     gridApiRef.current = params.api;
     
@@ -248,7 +222,30 @@ export function AGDataTable<T = any>({
         columnDefs={columnDefs}
         onGridReady={onGridReady}
         onRowClicked={onRowClicked}
-        {...gridOptions}
+        
+        // Base settings
+        animateRows={animateRows}
+        headerHeight={headerHeight}
+        rowHeight={rowHeight}
+        suppressHorizontalScroll={suppressHorizontalScroll}
+        suppressColumnVirtualisation={suppressColumnVirtualisation}
+        rowClass={rowClass}
+        
+        // Updated selection configuration (v32+ format)
+        rowSelection={rowSelection}
+        
+        // Theme - use legacy mode since we're using CSS files
+        theme="legacy"
+        
+        // Pagination
+        pagination={pagination}
+        paginationPageSize={paginationPageSize}
+        paginationPageSizeSelector={paginationPageSizeSelector}
+        
+        // Mode specific options
+        domLayout={domLayout}
+        cellSelection={cellSelection}
+        sideBar={sideBar}
       />
       
       <style jsx>{`
@@ -262,6 +259,9 @@ export function AGDataTable<T = any>({
     </div>
   );
 }
+
+// For backward compatibility
+export const DataTable = AGDataTable;
 
 // Example usage for rack logistics:
 export const RackLogisticsTable = () => {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DataTable } from '../DataTable';
+import { AGDataTable, AGColumnDef } from '../DataTable';
 import TableToggle from '../TableToggle';
 
 interface SampleData {
@@ -22,32 +22,29 @@ const sampleData: SampleData[] = [
 const TableToggleExample: React.FC = () => {
   const [mode, setMode] = useState<'summary' | 'drilldown' | 'deepDive'>('summary');
 
-  const columns = [
+  const columns: AGColumnDef<SampleData>[] = [
     {
-      key: 'name',
+      field: 'name',
       title: 'Project Name',
       statusAccessor: (row: SampleData) => row.status,
     },
     {
-      key: 'value',
+      field: 'value',
       title: 'Value',
-      align: 'right' as const,
       cellRenderer: (row: SampleData) => `$${row.value.toLocaleString()}`,
     },
     {
-      key: 'change',
+      field: 'change',
       title: 'Change',
-      align: 'right' as const,
       statusAccessor: (row: SampleData) => row.change > 0 ? 'success' : row.change < -5 ? 'error' : 'warning',
       cellRenderer: (row: SampleData) => `${row.change > 0 ? '+' : ''}${row.change}%`,
     },
     {
-      key: 'lastUpdated',
+      field: 'lastUpdated',
       title: 'Last Updated',
-      align: 'center' as const,
     },
     {
-      key: 'id',
+      field: 'id',
       title: 'ID',
     },
   ];
@@ -62,7 +59,7 @@ const TableToggleExample: React.FC = () => {
         showDeepDive={true} 
       />
       
-      <DataTable 
+      <AGDataTable 
         columns={columns}
         data={sampleData}
         mode={mode}
