@@ -218,12 +218,12 @@ const logisticsColumns: ColumnDef<LogisticsEntry>[] = [
 
 // Mock data for capacity trend chart
 const capacityTrendData: CapacityData[] = [
-  { name: 'Jan', actual: 4200, forecast: 4000, remaining: 800 },
-  { name: 'Feb', actual: 4800, forecast: 4500, remaining: 700 },
-  { name: 'Mar', actual: 5200, forecast: 5000, remaining: 650 },
-  { name: 'Apr', actual: 5500, forecast: 5200, remaining: 600 },
-  { name: 'May', actual: 5800, forecast: 5600, remaining: 550 },
-  { name: 'Jun', actual: 6200, forecast: 6000, remaining: 500 },
+  { name: 'Jan', actual: 4200, forecast: 3800, remaining: 800 },
+  { name: 'Feb', actual: 4800, forecast: 4300, remaining: 700 },
+  { name: 'Mar', actual: 5200, forecast: 4700, remaining: 650 },
+  { name: 'Apr', actual: 5500, forecast: 5600, remaining: 600 },
+  { name: 'May', actual: 5800, forecast: 6200, remaining: 550 },
+  { name: 'Jun', actual: 6200, forecast: 5800, remaining: 500 },
 ];
 
 // Mock data for region capacity
@@ -475,6 +475,11 @@ const DashboardView: React.FC = () => {
                   dataKey={['actual', 'forecast']} 
                   xAxisKey="name" 
                   height={320}
+                  tooltipFormatter={(value, name) => {
+                    // Format the value as a string with the capitalized name
+                    const formattedName = name.charAt(0).toUpperCase() + name.slice(1);
+                    return [`${value} racks`, formattedName];
+                  }}
                 />
               </div>
             </div>

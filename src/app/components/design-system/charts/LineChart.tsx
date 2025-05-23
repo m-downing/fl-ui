@@ -189,12 +189,18 @@ export const LineChart: React.FC<LineChartProps> = ({
               formatter={tooltipFormatter}
               contentStyle={{
                 backgroundColor: chartTokens.tooltip.bg,
-                color: chartTokens.tooltip.color,
+                color: '#FFFFFF',
                 borderRadius: chartTokens.tooltip.borderRadius,
                 padding: chartTokens.tooltip.padding,
                 fontSize: chartTokens.tooltip.fontSize,
                 fontFamily: typography.fontFamily.openSans,
                 border: 'none'
+              }}
+              itemStyle={{
+                color: '#FFFFFF'
+              }}
+              labelStyle={{
+                color: '#FFFFFF'
               }}
               cursor={{ stroke: 'rgba(128,128,128,0.3)', strokeWidth: 1, strokeDasharray: '3 3' }}
             />
