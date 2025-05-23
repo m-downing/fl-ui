@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import Image from 'next/image';
+import clsx from 'clsx';
 // Removed MUI imports: Grid, Paper, Box, Typography, Divider, Button, IconButton, Chip
 // Removed MUI Icon imports: MoreVertIcon, WarningAmberIcon
 
@@ -250,10 +251,18 @@ interface LogisticsTableProps {
   title: string;
   data: LogisticsEntry[];
   showDeepDive?: boolean;
+  deepDiveUrl?: string;
 }
 
-const LogisticsTable: React.FC<LogisticsTableProps> = ({ title, data, showDeepDive = false }) => {
+const LogisticsTable: React.FC<LogisticsTableProps> = ({ title, data, showDeepDive = false, deepDiveUrl }) => {
   const [mode, setMode] = useState<'summary' | 'drilldown' | 'deepDive'>('summary');
+  
+  // Handler for opening deep dive in new tab
+  const handleOpenDeepDiveInNewTab = useCallback(() => {
+    if (deepDiveUrl) {
+      window.open(deepDiveUrl, '_blank');
+    }
+  }, [deepDiveUrl]);
   
   // Create specific columns for warehouse table (without Status column and Priority first)
   const warehouseColumns: AGColumnDef<LogisticsEntry>[] = [
@@ -296,11 +305,58 @@ const LogisticsTable: React.FC<LogisticsTableProps> = ({ title, data, showDeepDi
       <div className="flex justify-between items-center mb-6">
         <h6 className="text-lg font-medium text-neutral-800">{title}</h6>
         <div className="absolute top-3 right-3">
-          <TableToggle 
-            mode={mode} 
-            onChange={setMode} 
-            showDeepDive={showDeepDive} 
-          />
+          {/* For Warehouse table, add the deep dive external functionality */}
+          {title === "Warehouse Inventory & Allocation" && deepDiveUrl ? (
+            <div className="flex items-center">
+              <div className="flex rounded-md overflow-hidden border border-gray-300">
+                <button
+                  className={clsx(
+                    'px-4 py-2 text-sm font-medium',
+                    mode === 'summary'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-white text-gray-700 hover:bg-gray-50'
+                  )}
+                  onClick={() => setMode('summary')}
+                >
+                  Summary
+                </button>
+                <button
+                  className={clsx(
+                    'px-4 py-2 text-sm font-medium border-l border-gray-300',
+                    mode === 'drilldown'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-white text-gray-700 hover:bg-gray-50'
+                  )}
+                  onClick={() => setMode('drilldown')}
+                >
+                  Drill Down
+                </button>
+              </div>
+              
+              {/* Custom rocket button with tooltip */}
+              <button
+                className={clsx(
+                  'ml-2 p-2 rounded-md',
+                  mode === 'deepDive' ? 'bg-blue-100' : 'bg-transparent'
+                )}
+                onClick={() => handleOpenDeepDiveInNewTab()}
+                title="Deep Dive (Opens in new tab)"
+              >
+                <Image
+                  src="/icons/ui/rocket.svg"
+                  width={28}
+                  height={28}
+                  alt="Deep Dive"
+                />
+              </button>
+            </div>
+          ) : (
+            <TableToggle 
+              mode={mode} 
+              onChange={setMode} 
+              showDeepDive={showDeepDive} 
+            />
+          )}
         </div>
       </div>
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-primary-500 scrollbar-track-white">
@@ -574,7 +630,12 @@ const DashboardView: React.FC = () => {
             <LogisticsTable title="Incoming Rack Shipments" data={logisticsData1} showDeepDive={false} />
           </div>
           <div className="md:col-span-1">
-            <LogisticsTable title="Warehouse Inventory & Allocation" data={logisticsData2} showDeepDive={true} />
+            <LogisticsTable 
+              title="Warehouse Inventory & Allocation" 
+              data={logisticsData2} 
+              showDeepDive={true}
+              deepDiveUrl="/flow/dashboard/warehouse-deep-dive" 
+            />
           </div>
         </div>
 

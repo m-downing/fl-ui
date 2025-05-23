@@ -10,6 +10,7 @@ export interface TableToggleProps {
   onChange: (mode: DetailLevel) => void;
   showDeepDive?: boolean;
   className?: string;
+  onDeepDiveExternal?: () => void;
 }
 
 export const TableToggle: React.FC<TableToggleProps> = ({
@@ -17,8 +18,21 @@ export const TableToggle: React.FC<TableToggleProps> = ({
   onChange,
   showDeepDive = false,
   className,
+  onDeepDiveExternal,
 }) => {
   const [isHovering, setIsHovering] = useState(false);
+
+  // Handle the deep dive button click
+  const handleDeepDiveClick = (e: React.MouseEvent) => {
+    // If external handler exists, use it to open in a new tab
+    if (onDeepDiveExternal) {
+      e.preventDefault();
+      onDeepDiveExternal();
+    } else {
+      // Default behavior - toggle mode
+      onChange('deepDive');
+    }
+  };
 
   return (
     <div className={clsx('flex items-center', className)}>
@@ -55,10 +69,10 @@ export const TableToggle: React.FC<TableToggleProps> = ({
             'ml-2 p-2 rounded-md',
             mode === 'deepDive' ? 'bg-blue-100' : 'bg-transparent'
           )}
-          onClick={() => onChange('deepDive')}
+          onClick={handleDeepDiveClick}
           onMouseEnter={() => setIsHovering(true)}
           onMouseLeave={() => setIsHovering(false)}
-          title="Deep Dive"
+          title={onDeepDiveExternal ? "Deep Dive (Ctrl+Click or Middle-Click to open in new tab)" : "Deep Dive"}
         >
           <Image
             src={isHovering ? '/icons/ui/rocket-hover.svg' : '/icons/ui/rocket.svg'}
