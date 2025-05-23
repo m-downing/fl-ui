@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Paper, 
   Typography, 
@@ -88,19 +88,21 @@ const regionalKpiData: RegionalKpiData[] = [
 function TabPanel(props: { children: React.ReactNode; value: number; index: number; }) {
   const { children, value, index, ...other } = props;
 
+  // Only render content when the tab is active
+  if (value !== index) {
+    return <div role="tabpanel" hidden aria-labelledby={`kpi-tab-${index}`} />;
+  }
+
   return (
     <div
       role="tabpanel"
-      hidden={value !== index}
       id={`kpi-tabpanel-${index}`}
       aria-labelledby={`kpi-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ py: 3 }}>
-          {children}
-        </Box>
-      )}
+      <Box sx={{ py: 3 }}>
+        {children}
+      </Box>
     </div>
   );
 }
@@ -109,6 +111,16 @@ export const KPIsView: React.FC = () => {
   const [timeRange, setTimeRange] = useState('6months');
   const [region, setRegion] = useState('all');
   const [tabValue, setTabValue] = useState(0);
+  const [tabsReady, setTabsReady] = useState(false);
+  
+  useEffect(() => {
+    // Delay tabs rendering to avoid measurement issues
+    const timer = setTimeout(() => {
+      setTabsReady(true);
+    }, 150);
+    
+    return () => clearTimeout(timer);
+  }, []);
   
   const handleTimeRangeChange = (event: SelectChangeEvent<string>) => {
     setTimeRange(event.target.value);
@@ -120,6 +132,28 @@ export const KPIsView: React.FC = () => {
   
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
+  };
+  
+  // Render the tabs without scrolling
+  const renderTabs = () => {
+    if (!tabsReady) {
+      return <div className="h-12 border-b border-neutral-200"></div>;
+    }
+    
+    return (
+      <Tabs 
+        value={tabValue} 
+        onChange={handleTabChange} 
+        aria-label="KPI categories"
+        variant="fullWidth"
+      >
+        <Tab label="Overview" />
+        <Tab label="Procurement" />
+        <Tab label="Deployment" />
+        <Tab label="Utilization" />
+        <Tab label="Cost Management" />
+      </Tabs>
+    );
   };
   
   return (
@@ -218,19 +252,7 @@ export const KPIsView: React.FC = () => {
       {/* KPI Category Tabs */}
       <Paper className="mb-6">
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs 
-            value={tabValue} 
-            onChange={handleTabChange} 
-            aria-label="KPI categories"
-            variant="scrollable"
-            scrollButtons="auto"
-          >
-            <Tab label="Overview" />
-            <Tab label="Procurement" />
-            <Tab label="Deployment" />
-            <Tab label="Utilization" />
-            <Tab label="Cost Management" />
-          </Tabs>
+          {renderTabs()}
         </Box>
         
         {/* Overview Tab */}
