@@ -14,7 +14,7 @@ export const colors = {
       300: '#9fb3c8',
       400: '#829ab1',
       500: '#627d98',
-      600: '#17314a', // Your actual primary color
+      600: '#17314a', //  primary color
       700: '#10273b',
       800: '#091d2d',
       900: '#030e19',
@@ -115,12 +115,12 @@ export const colors = {
       600: '#475569',
     },
     dataViz: {
-      primary:   '#3086e3',  
-      secondary: '#59ded3',  
+      primary:   '#17314a',  
+      secondary: '#829ab1',  
       positive:  '#0fa892', 
       negative:  '#e34242',  
-      alt:       '#a855f7',  
-      highlight: '#ff9266',  
+      alt:       '#bcccdc',  
+      highlight: '#f6ad55',  
     },
     
 

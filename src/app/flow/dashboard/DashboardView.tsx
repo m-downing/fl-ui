@@ -13,6 +13,7 @@ import {
 import { DataTable, ColumnDef } from '@/app/components/design-system/DataTable';
 import Modal from '@/app/components/design-system/Modal';
 import Badge from '@/app/components/design-system/Badge';
+import Button from '@/app/components/design-system/Button';
 
 // Define BadgeVariant type to match what's in the Badge component
 type BadgeVariant = 
@@ -550,38 +551,298 @@ const DashboardView: React.FC = () => {
         <Modal
           isOpen={isContactModalOpen}
           onClose={handleCloseContactModal}
-          title={`Contact Information for Alert: ${currentAlertForContacts.message.substring(0, 30)}${currentAlertForContacts.message.length > 30 ? '...' : ''}`}
-          size="xl"
+          title={`${currentAlertForContacts.sctId}: ${currentAlertForContacts.message}`}
+          size="lg"
+          footer={
+            <div className="flex justify-end items-center w-full">
+              <Button variant="secondary" onClick={handleCloseContactModal}>Close Issue Tracker</Button>
+            </div>
+          }
         >
-          <div className="space-y-6 p-4">
-            <h6 className="text-lg font-semibold text-neutral-800 mb-3 border-b border-neutral-200 pb-3">Key Contacts for: {currentAlertForContacts.location} - <span className={`${currentAlertForContacts.severity === 'critical' ? 'text-red-600' : currentAlertForContacts.severity === 'warning' ? 'text-yellow-600' : 'text-blue-600'}`}>{currentAlertForContacts.severity}</span></h6>
-            {currentAlertForContacts.contacts.map((contact, index) => (
-              <div key={index} className="bg-neutral-50 shadow-sm rounded-lg p-4 mb-4 border border-neutral-200">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
-                  <div>
-                    <p className="text-xs font-medium text-neutral-500">Name</p>
-                    <p className="text-sm font-semibold text-neutral-800">{contact.name}</p>
+          <div className="space-y-4">
+            {/* Collapsible Contact Information Section */}
+            <div className="border border-neutral-200 rounded-lg overflow-hidden">
+              <div 
+                className="bg-neutral-50 p-3 flex justify-between items-center cursor-pointer"
+                onClick={() => {
+                  const contactsEl = document.getElementById('contacts-section');
+                  if (contactsEl) {
+                    contactsEl.classList.toggle('hidden');
+                  }
+                }}
+              >
+                <h4 className="text-sm font-medium text-neutral-700">Key Contacts ({currentAlertForContacts.contacts.length})</h4>
+                <svg className="w-5 h-5 text-neutral-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+              <div id="contacts-section" className="p-3 border-t border-neutral-200 hidden">
+                <div className="grid grid-cols-2 gap-4">
+                  {currentAlertForContacts.contacts.map((contact, index) => (
+                    <div key={index} className="bg-white p-2 rounded border border-neutral-200">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-medium text-sm">{contact.name}</p>
+                          <p className="text-xs text-neutral-500">{contact.role}</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <button 
+                            className="text-primary-600 hover:text-primary-700"
+                            onClick={() => window.location.href = `mailto:${contact.email}`}
+                          >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                          </button>
+                          <button 
+                            className="text-primary-600 hover:text-primary-700"
+                            onClick={() => window.location.href = `tel:${contact.phone}`}
+                          >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            
+            {/* Issue Details */}
+            <div className="bg-neutral-50 p-3 rounded-lg border border-neutral-200">
+              <div className="flex justify-between">
+                <div>
+                  <p className="text-xs text-neutral-500">Location</p>
+                  <p className="text-sm font-medium">{currentAlertForContacts.location}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-neutral-500">Reported</p>
+                  <p className="text-sm font-medium">{currentAlertForContacts.timestamp}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-neutral-500">Status</p>
+                  <p className={`text-sm font-medium ${
+                    currentAlertForContacts.severity === 'critical' ? 'text-red-600' : 
+                    currentAlertForContacts.severity === 'warning' ? 'text-yellow-600' : 
+                    'text-blue-600'
+                  }`}>
+                    {currentAlertForContacts.severity.toUpperCase()}
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Chat History */}
+            <div className="border border-neutral-200 rounded-lg">
+              <div className="p-3 bg-neutral-50 border-b border-neutral-200">
+                <h4 className="text-sm font-medium text-neutral-700">Resolution Log</h4>
+              </div>
+              <div 
+                className="p-3 max-h-60 overflow-y-auto" 
+                style={{ 
+                  minHeight: "240px", 
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none'
+                }}
+              >
+                <style jsx>{`
+                  .chat-scroll::-webkit-scrollbar {
+                    display: none;
+                  }
+                `}</style>
+                {/* Example messages - you can replace with actual data */}
+                <div className="mb-3">
+                  <div className="flex items-start gap-2">
+                    <div className="rounded-full bg-blue-100 w-8 h-8 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs font-medium text-blue-700">
+                        {currentAlertForContacts.contacts[0]?.name.split(' ').map(n => n[0]).join('')}
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between">
+                        <p className="text-xs font-medium text-neutral-700">{currentAlertForContacts.contacts[0]?.name}</p>
+                        <p className="text-xs text-neutral-500">{new Date().toLocaleTimeString()}</p>
+                      </div>
+                      <div className="mt-1 p-2 bg-neutral-100 rounded-lg">
+                        <p className="text-sm">Initial assessment: {currentAlertForContacts.message}. Investigating root cause.</p>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs font-medium text-neutral-500">Role</p>
-                    <p className="text-sm text-neutral-800">{contact.role}</p>
+                </div>
+                
+                <div className="mb-3">
+                  <div className="flex items-start gap-2">
+                    <div className="rounded-full bg-neutral-100 w-8 h-8 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs font-medium text-neutral-700">ME</span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between">
+                        <p className="text-xs font-medium text-neutral-700">You</p>
+                        <p className="text-xs text-neutral-500">{new Date(Date.now() - 300000).toLocaleTimeString()}</p>
+                      </div>
+                      <div className="mt-1 p-2 bg-neutral-100 rounded-lg">
+                        <p className="text-sm">What's the current impact on operations?</p>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs font-medium text-neutral-500">Email</p>
-                    <p className="text-sm text-primary-600 hover:underline">
-                      <a href={`mailto:${contact.email}`}>{contact.email}</a>
-                    </p>
+                </div>
+                
+                <div className="mb-3">
+                  <div className="flex items-start gap-2">
+                    <div className="rounded-full bg-green-100 w-8 h-8 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs font-medium text-green-700">
+                        {currentAlertForContacts.contacts[1]?.name.split(' ').map(n => n[0]).join('') || 'BB'}
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between">
+                        <p className="text-xs font-medium text-neutral-700">{currentAlertForContacts.contacts[1]?.name || 'Bob The Builder'}</p>
+                        <p className="text-xs text-neutral-500">{new Date(Date.now() - 240000).toLocaleTimeString()}</p>
+                      </div>
+                      <div className="mt-1 p-2 bg-neutral-100 rounded-lg">
+                        <p className="text-sm">Currently minimal impact. Redundant systems have kicked in. Load balancing is working as expected.</p>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs font-medium text-neutral-500">Phone</p>
-                    <p className="text-sm text-neutral-800">{contact.phone}</p>
+                </div>
+                
+                <div className="mb-3">
+                  <div className="flex items-start gap-2">
+                    <div className="rounded-full bg-blue-100 w-8 h-8 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs font-medium text-blue-700">
+                        {currentAlertForContacts.contacts[0]?.name.split(' ').map(n => n[0]).join('')}
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between">
+                        <p className="text-xs font-medium text-neutral-700">{currentAlertForContacts.contacts[0]?.name}</p>
+                        <p className="text-xs text-neutral-500">{new Date(Date.now() - 180000).toLocaleTimeString()}</p>
+                      </div>
+                      <div className="mt-1 p-2 bg-neutral-100 rounded-lg">
+                        <p className="text-sm">Confirmed. We've temporarily rerouted workloads from affected racks. Facilities team is en route to assess hardware.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mb-3">
+                  <div className="flex items-start gap-2">
+                    <div className="rounded-full bg-purple-100 w-8 h-8 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs font-medium text-purple-700">FM</span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between">
+                        <p className="text-xs font-medium text-neutral-700">Facilities Manager</p>
+                        <p className="text-xs text-neutral-500">{new Date(Date.now() - 120000).toLocaleTimeString()}</p>
+                      </div>
+                      <div className="mt-1 p-2 bg-neutral-100 rounded-lg">
+                        <p className="text-sm">On-site now. Initial inspection shows potential issues with PDU-3. Running full diagnostics.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mb-3">
+                  <div className="flex items-start gap-2">
+                    <div className="rounded-full bg-neutral-100 w-8 h-8 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs font-medium text-neutral-700">ME</span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between">
+                        <p className="text-xs font-medium text-neutral-700">You</p>
+                        <p className="text-xs text-neutral-500">{new Date(Date.now() - 90000).toLocaleTimeString()}</p>
+                      </div>
+                      <div className="mt-1 p-2 bg-neutral-100 rounded-lg">
+                        <p className="text-sm">Do we need to notify the business units? Any SLA impacts expected?</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mb-3">
+                  <div className="flex items-start gap-2">
+                    <div className="rounded-full bg-green-100 w-8 h-8 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs font-medium text-green-700">
+                        {currentAlertForContacts.contacts[1]?.name.split(' ').map(n => n[0]).join('') || 'BB'}
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between">
+                        <p className="text-xs font-medium text-neutral-700">{currentAlertForContacts.contacts[1]?.name || 'Bob The Builder'}</p>
+                        <p className="text-xs text-neutral-500">{new Date(Date.now() - 60000).toLocaleTimeString()}</p>
+                      </div>
+                      <div className="mt-1 p-2 bg-neutral-100 rounded-lg">
+                        <p className="text-sm">No SLA breach expected. Current capacity is sufficient. Will send comms update in 30 mins if situation changes.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mb-3">
+                  <div className="flex items-start gap-2">
+                    <div className="rounded-full bg-orange-100 w-8 h-8 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs font-medium text-orange-700">VE</span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between">
+                        <p className="text-xs font-medium text-neutral-700">Vendor Engineer</p>
+                        <p className="text-xs text-neutral-500">{new Date(Date.now() - 30000).toLocaleTimeString()}</p>
+                      </div>
+                      <div className="mt-1 p-2 bg-neutral-100 rounded-lg">
+                        <p className="text-sm">Remote diagnostics complete. Replacement PDU unit available in local inventory. ETA for swap: 45 minutes.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mb-3">
+                  <div className="flex items-start gap-2">
+                    <div className="rounded-full bg-blue-100 w-8 h-8 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs font-medium text-blue-700">
+                        {currentAlertForContacts.contacts[0]?.name.split(' ').map(n => n[0]).join('')}
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between">
+                        <p className="text-xs font-medium text-neutral-700">{currentAlertForContacts.contacts[0]?.name}</p>
+                        <p className="text-xs text-neutral-500">{new Date(Date.now() - 10000).toLocaleTimeString()}</p>
+                      </div>
+                      <div className="mt-1 p-2 bg-neutral-100 rounded-lg">
+                        <p className="text-sm">Excellent. Maintenance window approved. Will coordinate with NOC for planned failover during PDU replacement.</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            ))}
-            {currentAlertForContacts.contacts.length === 0 && (
-              <p className="text-sm text-neutral-600">No specific contacts listed for this alert.</p>
-            )}
+              
+              {/* Message Input */}
+              <div className="p-3 border-t border-neutral-200">
+                <div className="mb-2">
+                  <input 
+                    type="text"
+                    placeholder="Type your message here..."
+                    className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                </div>
+                <div className="flex justify-between items-center">
+                  <div className="flex gap-2">
+                    <button className="text-neutral-500 hover:text-neutral-700">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                      </svg>
+                    </button>
+                    <button className="text-neutral-500 hover:text-neutral-700">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </button>
+                  </div>
+                  <Button variant="primary">Send</Button>
+                </div>
+              </div>
+            </div>
           </div>
         </Modal>
       )}
