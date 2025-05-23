@@ -1,15 +1,13 @@
 import React, { useMemo, useCallback, useRef } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import { ColDef, GridApi, GridReadyEvent, ModuleRegistry, ICellRendererParams } from 'ag-grid-enterprise';
+import { ColDef, GridApi, GridReadyEvent, ModuleRegistry, ICellRendererParams } from 'ag-grid-community';
 import { AllCommunityModule } from 'ag-grid-community';
-import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-// Register AG Grid modules
-ModuleRegistry.registerModules([AllCommunityModule, AllEnterpriseModule]);
+// Only register the community module to avoid massive bundle size
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 // Import AG Grid styles - using only theme-alpine
 import 'ag-grid-community/styles/ag-theme-alpine.css';
-import 'ag-grid-enterprise';
 
 type DetailLevel = 'summary' | 'drilldown' | 'deepDive';
 
@@ -191,23 +189,6 @@ export function AGDataTable<T = Record<string, unknown>>({
 
   // Additional settings based on mode
   const domLayout = mode === 'summary' ? 'autoHeight' as const : undefined;
-  const cellSelection = mode === 'deepDive';
-  const sideBar = mode === 'deepDive' ? { toolPanels: ['columns', 'filters'] } : undefined;
-  
-  // Updated selection configuration for AG Grid v32+
-  const rowSelection = useMemo(() => {
-    if (mode === 'summary') {
-      return {
-        mode: 'singleRow' as const,
-        enableClickSelection: !onRowClick
-      };
-    } else {
-      return {
-        mode: 'multiRow' as const,
-        enableClickSelection: !onRowClick
-      };
-    }
-  }, [mode, onRowClick]);
   
   const onGridReady = useCallback((params: GridReadyEvent) => {
     gridApiRef.current = params.api;
@@ -246,12 +227,6 @@ export function AGDataTable<T = Record<string, unknown>>({
         suppressColumnVirtualisation={suppressColumnVirtualisation}
         rowClass={rowClass}
         
-        // Updated selection configuration (v32+ format)
-        rowSelection={rowSelection}
-        
-        // Theme - use legacy mode since we're using CSS files
-        theme="legacy"
-        
         // Pagination
         pagination={pagination}
         paginationPageSize={paginationPageSize}
@@ -259,8 +234,6 @@ export function AGDataTable<T = Record<string, unknown>>({
         
         // Mode specific options
         domLayout={domLayout}
-        cellSelection={cellSelection}
-        sideBar={sideBar}
       />
       
       <style jsx>{`

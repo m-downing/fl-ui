@@ -1,7 +1,11 @@
 import React from 'react';
-import { DataTable, ColumnDef } from '@/app/components/design-system';
+import { AGDataTable, AGColumnDef } from '@/app/components/design-system/DataTable';
+import Badge from '@/app/components/design-system/Badge';
 // Assuming a Badge component might be available or needed later for full DataTable feature parity
 // import { Badge } from '@/app/components/design-system'; 
+
+// Define the BadgeVariant type based on the variants used in the application
+
 
 // Sample Data Interface
 interface ServerRackActivity {
@@ -37,11 +41,12 @@ const sampleTableData: ServerRackActivity[] = [
 ];
 
 // Column Definitions
-const columns: ColumnDef<ServerRackActivity>[] = [
+const columns: AGColumnDef<ServerRackActivity>[] = [
   {
     field: 'operator',
     title: 'Operator',
     width: 220,
+    summaryPriority: 1,
     statusAccessor: (row) => {
       if (row.status === 'failed') return 'error';
       if (row.status === 'in-transit') return 'warning';
@@ -58,32 +63,35 @@ const columns: ColumnDef<ServerRackActivity>[] = [
     field: 'action',
     title: 'Action',
     width: 150,
+    summaryPriority: 2,
   },
   {
     field: 'status',
     title: 'Status',
     width: 120,
-    // In a real scenario, you might use the Badge component here for 'deepDive' mode as hinted in DataTable.tsx
+    summaryPriority: 3,
     cellRenderer: (row) => {
-      let colorClass = '';
+      let variant: 'standard' | 'active' | 'ordered' | 'inTransit' | 'critical' = 'standard';
       switch (row.status) {
-        case 'deployed': colorClass = 'text-green-600'; break;
-        case 'ordered': colorClass = 'text-blue-600'; break;
-        case 'in-transit': colorClass = 'text-yellow-600'; break;
-        case 'failed': colorClass = 'text-red-600'; break;
+        case 'deployed': variant = 'active'; break;
+        case 'ordered': variant = 'ordered'; break;
+        case 'in-transit': variant = 'inTransit'; break;
+        case 'failed': variant = 'critical'; break;
       }
-      return <span className={`font-semibold ${colorClass} px-2 py-1 rounded-full text-xs`}>{row.status.toUpperCase()}</span>;
+      return <Badge variant={variant} size="small">{row.status.toUpperCase()}</Badge>;
     }
   },
   {
     field: 'timestamp',
     title: 'Timestamp',
     width: 180,
+    summaryPriority: 4,
   },
   {
     field: 'capacityValue',
     title: 'Capacity (kW)',
-    width: 100,
+    width: 120,
+    summaryPriority: 5,
     cellRenderer: (row) => `${row.capacityValue.toFixed(2)} kW`
   },
   {
@@ -128,13 +136,13 @@ export function TableShowcase() {
           Quick overview of recent server rack activities across all global data centers. 
           Color coding indicates status: green for successful deployments, yellow for in-transit equipment, red for failed operations.
         </p>
-        <DataTable<ServerRackActivity> 
+        <AGDataTable<ServerRackActivity> 
           columns={columns} 
           data={sampleTableData} 
           mode="summary" 
-          maxSummaryColumns={4} // Explicitly set for this demo
-          maxRows={10}   // Max 10 rows visible, then scroll
-          // No explicit height, DataTable will calculate based on maxRows={10}
+          maxSummaryColumns={5} 
+          maxRows={10}
+          height="auto"
         />
       </div>
 
@@ -144,12 +152,12 @@ export function TableShowcase() {
           Regional breakdown of infrastructure deployments and capacity planning activities. 
           This view provides supply chain managers with deployment status across global regions.
         </p>
-        <DataTable<ServerRackActivity> 
+        <AGDataTable<ServerRackActivity> 
           columns={columns} 
           data={sampleTableData} 
           mode="drilldown" 
-          maxRows={20}   // Max 20 rows visible, then scroll (won't scroll with 15 data items)
-          // No explicit height, DataTable will calculate based on maxRows={20}
+          maxRows={20}
+          height={500}
         />
       </div>
 
@@ -159,11 +167,11 @@ export function TableShowcase() {
           Complete view of all rack infrastructure activities with full details. This comprehensive view helps supply chain analysts 
           track equipment from procurement through deployment and eventual decommissioning.
         </p>
-        <DataTable<ServerRackActivity> 
+        <AGDataTable<ServerRackActivity> 
           columns={columns} 
           data={sampleTableData} 
           mode="deepDive" 
-          height={400} // Explicit fixed height for deep dive with scrolling
+          height={400}
         />
       </div>
 
