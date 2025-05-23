@@ -173,6 +173,7 @@ const logisticsColumns: AGColumnDef<LogisticsEntry>[] = [
     field: 'status', 
     title: 'Status', 
     width: 120,
+    flex: 1,
     cellRenderer: (row: LogisticsEntry) => {
       let badgeVariant: BadgeVariant;
       switch(row.status) {
@@ -187,18 +188,19 @@ const logisticsColumns: AGColumnDef<LogisticsEntry>[] = [
       return <Badge variant={badgeVariant} size="small">{row.status}</Badge>;
     }
   },
-  { field: 'id', title: 'ID', width: 80 },
-  { field: 'rackName', title: 'Rack Name', width: 150 },
-  { field: 'sku', title: 'SKU', width: 120 },
-  { field: 'supplier', title: 'Supplier', width: 120 },
-  { field: 'purchaseOrder', title: 'PO Number', width: 130 },
-  { field: 'currentLocation', title: 'Current Location', width: 150 },
-  { field: 'estimatedDelivery', title: 'Est. Delivery', width: 130 },
-  { field: 'actualDelivery', title: 'Actual Delivery', width: 130 },
+  { field: 'id', title: 'ID', width: 80, flex: 1 },
+  { field: 'rackName', title: 'Rack Name', width: 150, flex: 1.5 },
+  { field: 'sku', title: 'SKU', width: 120, flex: 1 },
+  { field: 'supplier', title: 'Supplier', width: 120, flex: 1 },
+  { field: 'purchaseOrder', title: 'PO Number', width: 130, flex: 1 },
+  { field: 'currentLocation', title: 'Current Location', width: 150, flex: 1.5 },
+  { field: 'estimatedDelivery', title: 'Est. Delivery', width: 130, flex: 1 },
+  { field: 'actualDelivery', title: 'Actual Delivery', width: 130, flex: 1 },
   { 
     field: 'priority', 
     title: 'Priority', 
     width: 100,
+    flex: 1,
     cellRenderer: (row: LogisticsEntry) => {
       let badgeVariant: BadgeVariant;
       switch(row.priority) {
@@ -210,11 +212,11 @@ const logisticsColumns: AGColumnDef<LogisticsEntry>[] = [
       return <Badge variant={badgeVariant} size="small">{row.priority}</Badge>;
     }
   },
-  { field: 'quantity', title: 'Qty', width: 70 },
-  { field: 'assignedDc', title: 'Assigned DC', width: 120 },
-  { field: 'trackingNumber', title: 'Tracking #', width: 140 },
-  { field: 'notes', title: 'Notes', width: 200 },
-  { field: 'lastUpdate', title: 'Last Update', width: 180, cellRenderer: (row: LogisticsEntry) => new Date(row.lastUpdate).toLocaleString() },
+  { field: 'quantity', title: 'Qty', width: 70, flex: 0.5 },
+  { field: 'assignedDc', title: 'Assigned DC', width: 120, flex: 1 },
+  { field: 'trackingNumber', title: 'Tracking #', width: 140, flex: 1 },
+  { field: 'notes', title: 'Notes', width: 200, flex: 2 },
+  { field: 'lastUpdate', title: 'Last Update', width: 180, flex: 1.5, cellRenderer: (row: LogisticsEntry) => new Date(row.lastUpdate).toLocaleString() },
 ];
 
 // Mock data for capacity trend chart
@@ -259,6 +261,7 @@ const LogisticsTable: React.FC<LogisticsTableProps> = ({ title, data, showDeepDi
       field: 'priority', 
       title: 'Priority', 
       width: 100,
+      flex: 1,
       cellRenderer: (row: LogisticsEntry) => {
         let badgeVariant: BadgeVariant;
         switch(row.priority) {
@@ -270,19 +273,19 @@ const LogisticsTable: React.FC<LogisticsTableProps> = ({ title, data, showDeepDi
         return <Badge variant={badgeVariant} size="small">{row.priority}</Badge>;
       }
     },
-    { field: 'id', title: 'ID', width: 80 },
-    { field: 'rackName', title: 'Rack Name', width: 150 },
-    { field: 'sku', title: 'SKU', width: 120 },
-    { field: 'supplier', title: 'Supplier', width: 120 },
-    { field: 'purchaseOrder', title: 'PO Number', width: 130 },
-    { field: 'currentLocation', title: 'Current Location', width: 150 },
-    { field: 'estimatedDelivery', title: 'Est. Delivery', width: 130 },
-    { field: 'actualDelivery', title: 'Actual Delivery', width: 130 },
-    { field: 'quantity', title: 'Qty', width: 70 },
-    { field: 'assignedDc', title: 'Assigned DC', width: 120 },
-    { field: 'trackingNumber', title: 'Tracking #', width: 140 },
-    { field: 'notes', title: 'Notes', width: 200 },
-    { field: 'lastUpdate', title: 'Last Update', width: 180, cellRenderer: (row: LogisticsEntry) => new Date(row.lastUpdate).toLocaleString() },
+    { field: 'id', title: 'ID', width: 80, flex: 1 },
+    { field: 'rackName', title: 'Rack Name', width: 150, flex: 1.5 },
+    { field: 'sku', title: 'SKU', width: 120, flex: 1 },
+    { field: 'supplier', title: 'Supplier', width: 120, flex: 1 },
+    { field: 'purchaseOrder', title: 'PO Number', width: 130, flex: 1 },
+    { field: 'currentLocation', title: 'Current Location', width: 150, flex: 1.5 },
+    { field: 'estimatedDelivery', title: 'Est. Delivery', width: 130, flex: 1 },
+    { field: 'actualDelivery', title: 'Actual Delivery', width: 130, flex: 1 },
+    { field: 'quantity', title: 'Qty', width: 70, flex: 0.5 },
+    { field: 'assignedDc', title: 'Assigned DC', width: 120, flex: 1 },
+    { field: 'trackingNumber', title: 'Tracking #', width: 140, flex: 1 },
+    { field: 'notes', title: 'Notes', width: 200, flex: 2 },
+    { field: 'lastUpdate', title: 'Last Update', width: 180, flex: 1.5, cellRenderer: (row: LogisticsEntry) => new Date(row.lastUpdate).toLocaleString() },
   ];
 
   // Determine which columns to use based on the table title
@@ -334,6 +337,7 @@ const DashboardView: React.FC = () => {
       field: 'severity',
       title: 'Severity',
       width: 120,
+      flex: 1,
       cellRenderer: (row: AlertItem) => {
         let badgeVariant: BadgeVariant;
         switch(row.severity) {
@@ -349,6 +353,7 @@ const DashboardView: React.FC = () => {
       field: 'sctId',
       title: 'SCT ID',
       width: 100,
+      flex: 1,
       cellRenderer: (row: AlertItem) => (
         <span 
           onClick={() => navigator.clipboard.writeText(row.sctId)}
@@ -362,24 +367,28 @@ const DashboardView: React.FC = () => {
       field: 'message',
       title: 'Occurrence',
       width: 300,
+      flex: 2,
       cellRenderer: (row: AlertItem) => row.message
     },
     {
       field: 'location',
       title: 'Location',
       width: 140,
+      flex: 1,
       cellRenderer: (row: AlertItem) => row.location
     },
     {
       field: 'timestamp',
       title: 'Event Date',
       width: 180,
+      flex: 1,
       cellRenderer: (row: AlertItem) => row.timestamp
     },
     {
       field: 'resolutionLog',
       title: 'Resolution Log',
       width: 140,
+      flex: 1,
       cellRenderer: (row: AlertItem) => (
         <div className="flex justify-center items-center">
           <Image
