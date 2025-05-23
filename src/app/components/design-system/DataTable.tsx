@@ -1,311 +1,393 @@
-import React, { useRef, useEffect } from 'react';
-import { tableTokens } from './tokens/tableTokens';
-import { chartTokens } from './tokens/charts';
-import clsx from 'clsx';
+import React, { useMemo, useCallback, useRef } from 'react';
+import { AgGridReact } from 'ag-grid-react';
+import { ColDef, GridApi, GridReadyEvent, ModuleRegistry } from 'ag-grid-enterprise';
+import { AllCommunityModule } from 'ag-grid-community';
+import { AllEnterpriseModule } from 'ag-grid-enterprise';
+
+// Register AG Grid modules
+ModuleRegistry.registerModules([AllCommunityModule, AllEnterpriseModule]);
+
+// Import AG Grid styles
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
+import 'ag-grid-enterprise';
 
 type DetailLevel = 'summary' | 'drilldown' | 'deepDive';
 
-export interface ColumnDef<Row> {
-  key: string;
+export interface AGColumnDef<T = any> extends Omit<ColDef, 'field'> {
+  field: string;
   title: string;
-  align?: 'left'|'center'|'right';
-  width?: number|string;
-  statusAccessor?: (row: Row) => 'success'|'warning'|'error';
-  cellRenderer?: (row: Row) => React.ReactNode;
+  statusAccessor?: (row: T) => 'success' | 'warning' | 'error';
+  summaryPriority?: number; // Lower number = higher priority for summary mode
+  cellRenderer?: (row: T) => React.ReactNode;
+  width?: number;
 }
 
-export interface DataTableProps<Row> {
-  columns: ColumnDef<Row>[];
-  data: Row[];
+export interface AGDataTableProps<T = any> {
+  columns: AGColumnDef<T>[];
+  data: T[];
   mode?: DetailLevel;
-  maxColumns?: number;
-  maxRows?: number; 
-  width?: number|string;
-  height?: number|string;
+  maxSummaryColumns?: number;
+  maxRows?: number;
+  height?: number | string;
+  width?: number | string;
+  onRowClick?: (data: T) => void;
 }
 
-export function DataTable<Row>({ 
+// Status cell renderer for different modes
+const StatusCellRenderer = ({ value, data, colDef, api }: any) => {
+  const mode = api.getGridOption('mode') as DetailLevel;
+  const statusAccessor = colDef.statusAccessor;
+  
+  if (!statusAccessor) return value;
+  
+  const status = statusAccessor(data) as 'success' | 'warning' | 'error';
+  const statusColors = {
+    success: '#10B981',
+    warning: '#F59E0B', 
+    error: '#EF4444'
+  };
+
+  const baseStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    height: '100%',
+    padding: '0 12px'
+  };
+
+  switch (mode) {
+    case 'summary':
+      // Row-level status indicator via left border
+      return (
+        <div style={{
+          ...baseStyle,
+          borderLeft: `4px solid ${statusColors[status]}`,
+          marginLeft: '-12px',
+          paddingLeft: '16px'
+        }}>
+          {value}
+        </div>
+      );
+      
+    case 'drilldown':
+      // Cell-level status border
+      return (
+        <div style={{
+          ...baseStyle,
+          borderLeft: `3px solid ${statusColors[status]}`,
+          marginLeft: '-12px',
+          paddingLeft: '15px'
+        }}>
+          {value}
+        </div>
+      );
+      
+    case 'deepDive':
+      // Badge-style indicator
+      return (
+        <div style={{ ...baseStyle, gap: '8px' }}>
+          <div style={{
+            width: '8px',
+            height: '8px',
+            borderRadius: '50%',
+            backgroundColor: statusColors[status]
+          }} />
+          {value}
+        </div>
+      );
+      
+    default:
+      return value;
+  }
+};
+
+export function AGDataTable<T = any>({
   columns,
   data,
   mode = 'summary',
-  maxColumns,
-  maxRows = 10,
-  width,
-  height,
-}: DataTableProps<Row>) {
-  const tableContainerRef = useRef<HTMLDivElement>(null);
-  const customScrollbarRef = useRef<HTMLDivElement>(null);
-  const thumbRef = useRef<HTMLDivElement>(null);
-  const isDragging = useRef(false);
-  const startX = useRef(0);
-  const scrollLeft = useRef(0);
+  maxSummaryColumns = 5,
+  maxRows,
+  height = 400,
+  width = '100%',
+  onRowClick
+}: AGDataTableProps<T>) {
+  const gridRef = useRef<AgGridReact>(null);
+  const gridApiRef = useRef<GridApi | null>(null);
 
-  // 1️⃣ Column slicing
-  let visibleCols = columns;
-  if (mode === 'summary') {
-    visibleCols = columns.slice(0, maxColumns ?? 5);
-  } else if (mode === 'drilldown') {
-    visibleCols = columns;
-  }
+  // Convert your column definitions to AG Grid format
+  const columnDefs = useMemo(() => {
+    let visibleColumns = [...columns];
 
-  // 2️⃣ Row slicing / virtualization - NO LONGER SLICING displayData for scrolling purposes.
-  // displayData will be the full dataset. Scrolling handled by container overflow.
-  const displayData = data; // Always use the full data
+    // Filter columns based on mode
+    if (mode === 'summary') {
+      visibleColumns = columns
+        .sort((a, b) => (a.summaryPriority || 999) - (b.summaryPriority || 999))
+        .slice(0, maxSummaryColumns);
+    }
 
-  // 3️⃣ Scroll container sizing
-  const headerHeightNum = parseInt(tableTokens.header.height, 10);
-  const rowHeightNum = parseInt(tableTokens.row.height, 10);
-
-  let calculatedHeight: number | string;
-  if (typeof height !== 'undefined') {
-    // If an explicit height prop is provided, use it.
-    calculatedHeight = height;
-  } else {
-    // Otherwise, calculate height dynamically based on maxRows or actual data length if shorter.
-    // This will apply to all modes (summary, drilldown, deepDive) when an explicit height is not set.
-    const numRowsForSizing = Math.min(data.length, maxRows); // maxRows defaults to 10 or uses passed prop
-    calculatedHeight = headerHeightNum + numRowsForSizing * rowHeightNum;
-  }
-
-  // Custom scrollbar functionality
-  useEffect(() => {
-    const tableContainer = tableContainerRef.current;
-    const customScrollbar = customScrollbarRef.current;
-    const thumb = thumbRef.current;
-    
-    if (!tableContainer || !customScrollbar || !thumb || mode === 'summary') return;
-
-    const updateThumbPosition = () => {
-      if (!tableContainer || !thumb || !customScrollbar) return;
+    return visibleColumns.map((col): ColDef => {
+      const { field, title, statusAccessor, summaryPriority, cellRenderer, ...restColProps } = col;
       
-      const { scrollWidth, clientWidth, scrollLeft } = tableContainer;
-      const trackWidth = customScrollbar.clientWidth;
-      
-      // Only show scrollbar if content is wider than container
-      if (scrollWidth <= clientWidth) {
-        customScrollbar.style.display = 'none';
-        return;
-      } else {
-        customScrollbar.style.display = 'block';
+      // Determine which cell renderer to use
+      let renderer;
+      if (statusAccessor) {
+        renderer = StatusCellRenderer;
+      } else if (cellRenderer) {
+        // Convert our row-based renderer to AG Grid params-based renderer
+        renderer = (params: any) => cellRenderer(params.data);
       }
       
-      // Calculate thumb width - it should be proportional to the visible area
-      const thumbWidthPercentage = (clientWidth / scrollWidth) * 100;
-      thumb.style.width = `${Math.max(thumbWidthPercentage, 10)}%`; // Min 10% width
+      return {
+        field,
+        headerName: title,
+        width: typeof col.width === 'number' ? col.width : undefined,
+        minWidth: mode === 'summary' ? 120 : 100,
+        flex: mode === 'summary' ? 1 : undefined,
+        resizable: mode !== 'summary',
+        sortable: true,
+        filter: mode !== 'summary',
+        headerTooltip: title,
+        
+        // Set the renderer
+        cellRenderer: renderer,
+        cellRendererParams: {
+          statusAccessor
+        },
+        
+        // Apply any other column config
+        ...restColProps
+      };
+    });
+  }, [columns, mode, maxSummaryColumns]);
+
+  // Grid options based on mode
+  const gridOptions = useMemo(() => {
+    const baseOptions = {
+      mode, // Pass mode to grid for access in cell renderers
+      animateRows: true,
+      headerHeight: 40,
+      rowHeight: 45,
+      suppressHorizontalScroll: mode === 'summary',
+      suppressColumnVirtualisation: mode === 'summary',
       
-      // Calculate thumb position
-      const scrollPercentage = scrollLeft / (scrollWidth - clientWidth);
-      const maxLeft = trackWidth - thumb.clientWidth;
-      thumb.style.left = `${scrollPercentage * maxLeft}px`;
+      // Styling
+      rowClass: mode === 'summary' ? 'summary-row' : undefined,
+      
+      // Row selection
+      rowSelection: mode !== 'summary' ? 'multiple' as const : 'single' as const,
+      suppressRowClickSelection: !!onRowClick,
     };
+
+    // Common pagination options if maxRows is provided
+    const paginationOptions = maxRows ? {
+      pagination: true,
+      paginationPageSize: maxRows,
+    } : {};
+
+    switch (mode) {
+      case 'summary':
+        return {
+          ...baseOptions,
+          pagination: false,
+          suppressHorizontalScroll: true,
+          domLayout: 'autoHeight' as const,
+          ...(maxRows ? { paginationPageSize: maxRows } : {}),
+        };
+        
+      case 'drilldown':
+        return {
+          ...baseOptions,
+          pagination: true,
+          paginationPageSize: maxRows || 25,
+          paginationPageSizeSelector: [25, 50, 100],
+        };
+        
+      case 'deepDive':
+        return {
+          ...baseOptions,
+          pagination: true,
+          paginationPageSize: maxRows || 50,
+          paginationPageSizeSelector: [50, 100, 200],
+          enableRangeSelection: true,
+          enableCharts: true,
+          sideBar: {
+            toolPanels: ['columns', 'filters'],
+          },
+        };
+        
+      default:
+        return baseOptions;
+    }
+  }, [mode, onRowClick, maxRows]);
+
+  const onGridReady = useCallback((params: GridReadyEvent) => {
+    gridApiRef.current = params.api;
     
-    const onMouseDown = (e: MouseEvent) => {
-      if (e.target !== thumb) return;
-      
-      e.preventDefault();
-      isDragging.current = true;
-      startX.current = e.clientX - thumb.getBoundingClientRect().left;
-      scrollLeft.current = tableContainer.scrollLeft;
-      
-      document.addEventListener('mousemove', onMouseMove);
-      document.addEventListener('mouseup', onMouseUp);
-    };
-    
-    const onMouseMove = (e: MouseEvent) => {
-      if (!isDragging.current || !tableContainer || !thumb || !customScrollbar) return;
-      
-      e.preventDefault();
-      const x = e.clientX - customScrollbar.getBoundingClientRect().left;
-      const walkX = x - startX.current;
-      
-      const trackWidth = customScrollbar.clientWidth;
-      const thumbWidth = thumb.clientWidth;
-      
-      // Calculate how much to scroll
-      const scrollRatio = (tableContainer.scrollWidth - tableContainer.clientWidth) / (trackWidth - thumbWidth);
-      tableContainer.scrollLeft = scrollLeft.current + (walkX * scrollRatio);
-    };
-    
-    const onMouseUp = () => {
-      isDragging.current = false;
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
-    };
-    
-    // Update thumb on scroll
-    tableContainer.addEventListener('scroll', updateThumbPosition);
-    
-    // Setup mouse events for dragging
-    customScrollbar.addEventListener('mousedown', onMouseDown);
-    
-    // Initial update
-    updateThumbPosition();
-    
-    // Clean up
-    return () => {
-      tableContainer.removeEventListener('scroll', updateThumbPosition);
-      customScrollbar.removeEventListener('mousedown', onMouseDown);
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
-    };
+    if (mode === 'summary') {
+      params.api.sizeColumnsToFit();
+    }
   }, [mode]);
 
-  const isAdvancedMode = mode === 'drilldown' || mode === 'deepDive';
-
-  // The Badge component is used below. Ensure it is defined and imported if necessary.
-  // For example: import { Badge } from '../components/Badge'; // Adjust path as needed
+  const onRowClicked = useCallback((event: any) => {
+    if (onRowClick) {
+      onRowClick(event.data);
+    }
+  }, [onRowClick]);
 
   return (
-    <>
-      {isAdvancedMode && (
-        <div 
-          ref={customScrollbarRef}
-          className="relative h-2 mb-1 bg-gray-100 rounded cursor-pointer select-none"
+    <div 
+      className="ag-theme-alpine"
+      style={{ 
+        height: typeof height === 'number' ? `${height}px` : height,
+        width: typeof width === 'number' ? `${width}px` : width,
+      }}
+    >
+      <AgGridReact
+        ref={gridRef}
+        rowData={data}
+        columnDefs={columnDefs}
+        onGridReady={onGridReady}
+        onRowClicked={onRowClicked}
+        {...gridOptions}
+      />
+      
+      <style jsx>{`
+        .summary-row {
+          cursor: ${onRowClick ? 'pointer' : 'default'};
+        }
+        .summary-row:hover {
+          background-color: #f8fafc !important;
+        }
+      `}</style>
+    </div>
+  );
+}
+
+// Example usage for rack logistics:
+export const RackLogisticsTable = () => {
+  const rackColumns: AGColumnDef[] = [
+    {
+      field: 'rackId',
+      title: 'Rack ID',
+      summaryPriority: 1,
+      pinned: 'left',
+      statusAccessor: (row) => row.overallStatus,
+    },
+    {
+      field: 'datacenter',
+      title: 'Data Center',
+      summaryPriority: 2,
+    },
+    {
+      field: 'utilization',
+      title: 'Utilization %',
+      summaryPriority: 3,
+      statusAccessor: (row) => 
+        row.utilization > 90 ? 'error' : 
+        row.utilization > 75 ? 'warning' : 'success',
+      valueFormatter: (params) => `${params.value}%`,
+    },
+    {
+      field: 'location',
+      title: 'Location',
+      summaryPriority: 4,
+    },
+    {
+      field: 'vendor',
+      title: 'Vendor',
+      summaryPriority: 5,
+    },
+    // Additional columns for drilldown/deepDive
+    {
+      field: 'installDate',
+      title: 'Install Date',
+      filter: 'agDateColumnFilter',
+      valueFormatter: (params) => new Date(params.value).toLocaleDateString(),
+    },
+    {
+      field: 'powerUsage',
+      title: 'Power Usage (kW)',
+      filter: 'agNumberColumnFilter',
+    },
+    {
+      field: 'temperature',
+      title: 'Temperature (°C)',
+      filter: 'agNumberColumnFilter',
+      statusAccessor: (row) =>
+        row.temperature > 35 ? 'error' :
+        row.temperature > 30 ? 'warning' : 'success',
+    },
+  ];
+
+  const [mode, setMode] = React.useState<DetailLevel>('summary');
+  const [rackData] = React.useState([
+    {
+      rackId: 'R-NYC-001',
+      datacenter: 'NYC Primary',
+      utilization: 85,
+      location: 'Floor 2, Aisle A',
+      vendor: 'Dell',
+      overallStatus: 'warning',
+      installDate: '2023-01-15',
+      powerUsage: 12.5,
+      temperature: 28,
+    },
+    // ... more rack data
+  ]);
+
+  return (
+    <div>
+      <div style={{ marginBottom: '16px' }}>
+        <button 
+          onClick={() => setMode('summary')}
           style={{ 
-            marginLeft: '8px',
             marginRight: '8px',
-            display: 'none', // Initially hidden, will be shown by JS if needed
+            padding: '8px 16px',
+            backgroundColor: mode === 'summary' ? '#3B82F6' : '#E5E7EB',
+            color: mode === 'summary' ? 'white' : 'black',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
           }}
         >
-          <div 
-            ref={thumbRef}
-            className="absolute top-0 h-full bg-primary-200 rounded cursor-grab active:cursor-grabbing hover:bg-primary-300"
-            style={{ left: 0 }}
-          />
-        </div>
-      )}
-      <div
-        ref={tableContainerRef}
-        className={clsx(
-          "data-table-scroll-container"
-        )}
-        style={{
-          width,
-          height: typeof calculatedHeight === 'number' ? `${calculatedHeight}px` : calculatedHeight,
-          border: tableTokens.container.border,
-          borderRadius: tableTokens.container.borderRadius,
-          boxShadow: tableTokens.container.shadow,
-          overflowY: 'auto',
-          overflowX: 'auto',
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none',
-        }}
-      >
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead style={{
-            background: tableTokens.header.bg,
-            color: tableTokens.header.color,
-            fontSize: tableTokens.header.fontSize,
-            fontWeight: tableTokens.header.fontWeight,
-            height: tableTokens.header.height,
-            borderBottom: tableTokens.header.border,
-            position: 'sticky', // Keep header visible during scroll
-            top: 0,             // Required for sticky positioning
-            zIndex: 1,          // Ensure header is above body content during scroll
-          }}>
-            <tr>
-              {visibleCols.map(col => (
-                <th
-                  key={col.key}
-                  style={{
-                    textAlign: col.align || 'left',
-                    padding: '0.75rem 1.5rem',
-                    width: col.width,
-                  }}
-                >
-                  <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {col.title}
-                  </div>
-                </th>
-              ))}
-            </tr>
-          </thead>
-
-          <tbody>
-            {displayData.map((row, rowIndex) => {
-              // Determine row-level status for Prong 1 summary highlight
-              const rowStatus = visibleCols[0].statusAccessor?.(row);
-              
-              // MODIFIED: rowBg will now only handle zebra striping.
-              // Status for summary mode will be handled by a left border on the first cell.
-              const rowBg = rowIndex % 2 === 0 ? undefined : tableTokens.row.zebraBg;
-
-              // NEW: Determine border for the first cell in summary mode
-              const firstCellBorderLeft =
-                mode === 'summary' && rowStatus
-                  ? `6px solid ${chartTokens.status[rowStatus]}`
-                  : undefined;
-
-              return (
-                <tr
-                  key={rowIndex}
-                  className={clsx({
-                    'hover:bg-gray-100': !rowBg, // Example hover, replace with token: tableTokens.row.hoverBg
-                  })}
-                  style={{
-                    height: tableTokens.row.height,
-                    backgroundColor: rowBg, // Now only for zebra striping
-                    borderBottom: tableTokens.row.borderBottom,
-                  }}
-                >
-                  {visibleCols.map((col, colIndex) => {
-                    const cellValue = (row as Record<string, React.ReactNode>)[col.key];
-                    
-                    // Determine cell-specific border (used for drilldown, and now first cell of summary)
-                    let cellBorderLeft: string | undefined = undefined;
-                    if (colIndex === 0 && mode === 'summary' && firstCellBorderLeft) {
-                      cellBorderLeft = firstCellBorderLeft;
-                    } else {
-                      const cellStatus = col.statusAccessor?.(row); // Keep this for drilldown and deepDive
-                      if (mode === 'drilldown' && cellStatus) {
-                        cellBorderLeft = `6px solid ${chartTokens.status[cellStatus]}`;
-                      }
-                    }
-
-                    const cellStyle: React.CSSProperties = {
-                      padding: '0.75rem 1.5rem',
-                      fontSize: tableTokens.row.fontSize,
-                      color: tableTokens.row.color,
-                      borderLeft: cellBorderLeft,
-                      textAlign: col.align || 'left',
-                    };
-
-                    // cellRenderer override
-                    if (col.cellRenderer) {
-                      return (
-                        <td key={col.key} style={cellStyle}>
-                          <div style={{ width: '100%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                            {col.cellRenderer(row)}
-                          </div>
-                        </td>
-                      );
-                    }
-                    
-                    // For deepDive, wrap in a Badge (existing logic)
-                    if (mode === 'deepDive' && col.statusAccessor?.(row)) {
-                      return (
-                        <td key={col.key} style={cellStyle}>
-                          <div style={{ width: '100%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                            <span>{cellValue}</span>
-                          </div>
-                        </td>
-                      );
-                    }
-
-                    return (
-                      <td key={col.key} style={cellStyle}>
-                        <div style={{ width: '100%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                          {cellValue}
-                        </div>
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+          Summary
+        </button>
+        <button 
+          onClick={() => setMode('drilldown')}
+          style={{ 
+            marginRight: '8px',
+            padding: '8px 16px',
+            backgroundColor: mode === 'drilldown' ? '#3B82F6' : '#E5E7EB',
+            color: mode === 'drilldown' ? 'white' : 'black',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          Drill Down
+        </button>
+        <button 
+          onClick={() => setMode('deepDive')}
+          style={{ 
+            padding: '8px 16px',
+            backgroundColor: mode === 'deepDive' ? '#3B82F6' : '#E5E7EB',
+            color: mode === 'deepDive' ? 'white' : 'black',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          Deep Dive
+        </button>
       </div>
-    </>
+
+      <AGDataTable
+        columns={rackColumns}
+        data={rackData}
+        mode={mode}
+        height={mode === 'summary' ? 'auto' : 500}
+        onRowClick={(data) => console.log('Clicked rack:', data)}
+      />
+    </div>
   );
-} 
+};

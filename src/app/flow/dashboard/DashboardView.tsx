@@ -10,7 +10,7 @@ import {
   MetricCard, 
   ProgressTracker 
 } from '@/app/components/design-system/charts';
-import { DataTable, ColumnDef } from '@/app/components/design-system/DataTable';
+import { AGDataTable, AGColumnDef } from '@/app/components/design-system/DataTable';
 import Modal from '@/app/components/design-system/Modal';
 import Badge from '@/app/components/design-system/Badge';
 import Button from '@/app/components/design-system/Button';
@@ -168,12 +168,12 @@ const logisticsData1 = generateLogisticsData(25, 'LOG1');
 const logisticsData2 = generateLogisticsData(30, 'LOG2');
 
 // Column definitions for logistics table
-const logisticsColumns: ColumnDef<LogisticsEntry>[] = [
+const logisticsColumns: AGColumnDef<LogisticsEntry>[] = [
   { 
-    key: 'status', 
+    field: 'status', 
     title: 'Status', 
     width: 120,
-    cellRenderer: (row) => {
+    cellRenderer: (row: LogisticsEntry) => {
       let badgeVariant: BadgeVariant;
       switch(row.status) {
         case 'Delivered': badgeVariant = 'delivered'; break;
@@ -187,19 +187,19 @@ const logisticsColumns: ColumnDef<LogisticsEntry>[] = [
       return <Badge variant={badgeVariant} size="small">{row.status}</Badge>;
     }
   },
-  { key: 'id', title: 'ID', width: 80 },
-  { key: 'rackName', title: 'Rack Name', width: 150 },
-  { key: 'sku', title: 'SKU', width: 120 },
-  { key: 'supplier', title: 'Supplier', width: 120 },
-  { key: 'purchaseOrder', title: 'PO Number', width: 130 },
-  { key: 'currentLocation', title: 'Current Location', width: 150 },
-  { key: 'estimatedDelivery', title: 'Est. Delivery', width: 130 },
-  { key: 'actualDelivery', title: 'Actual Delivery', width: 130 },
+  { field: 'id', title: 'ID', width: 80 },
+  { field: 'rackName', title: 'Rack Name', width: 150 },
+  { field: 'sku', title: 'SKU', width: 120 },
+  { field: 'supplier', title: 'Supplier', width: 120 },
+  { field: 'purchaseOrder', title: 'PO Number', width: 130 },
+  { field: 'currentLocation', title: 'Current Location', width: 150 },
+  { field: 'estimatedDelivery', title: 'Est. Delivery', width: 130 },
+  { field: 'actualDelivery', title: 'Actual Delivery', width: 130 },
   { 
-    key: 'priority', 
+    field: 'priority', 
     title: 'Priority', 
     width: 100,
-    cellRenderer: (row) => {
+    cellRenderer: (row: LogisticsEntry) => {
       let badgeVariant: BadgeVariant;
       switch(row.priority) {
         case 'High': badgeVariant = 'critical'; break;
@@ -210,11 +210,11 @@ const logisticsColumns: ColumnDef<LogisticsEntry>[] = [
       return <Badge variant={badgeVariant} size="small">{row.priority}</Badge>;
     }
   },
-  { key: 'quantity', title: 'Qty', width: 70 },
-  { key: 'assignedDc', title: 'Assigned DC', width: 120 },
-  { key: 'trackingNumber', title: 'Tracking #', width: 140 },
-  { key: 'notes', title: 'Notes', width: 200 },
-  { key: 'lastUpdate', title: 'Last Update', width: 180, cellRenderer: (row) => new Date(row.lastUpdate).toLocaleString() },
+  { field: 'quantity', title: 'Qty', width: 70 },
+  { field: 'assignedDc', title: 'Assigned DC', width: 120 },
+  { field: 'trackingNumber', title: 'Tracking #', width: 140 },
+  { field: 'notes', title: 'Notes', width: 200 },
+  { field: 'lastUpdate', title: 'Last Update', width: 180, cellRenderer: (row: LogisticsEntry) => new Date(row.lastUpdate).toLocaleString() },
 ];
 
 // Mock data for capacity trend chart
@@ -254,12 +254,12 @@ const LogisticsTable: React.FC<LogisticsTableProps> = ({ title, data, showDeepDi
   const [mode, setMode] = useState<'summary' | 'drilldown' | 'deepDive'>('summary');
   
   // Create specific columns for warehouse table (without Status column and Priority first)
-  const warehouseColumns: ColumnDef<LogisticsEntry>[] = [
+  const warehouseColumns: AGColumnDef<LogisticsEntry>[] = [
     { 
-      key: 'priority', 
+      field: 'priority', 
       title: 'Priority', 
       width: 100,
-      cellRenderer: (row) => {
+      cellRenderer: (row: LogisticsEntry) => {
         let badgeVariant: BadgeVariant;
         switch(row.priority) {
           case 'High': badgeVariant = 'critical'; break;
@@ -270,19 +270,19 @@ const LogisticsTable: React.FC<LogisticsTableProps> = ({ title, data, showDeepDi
         return <Badge variant={badgeVariant} size="small">{row.priority}</Badge>;
       }
     },
-    { key: 'id', title: 'ID', width: 80 },
-    { key: 'rackName', title: 'Rack Name', width: 150 },
-    { key: 'sku', title: 'SKU', width: 120 },
-    { key: 'supplier', title: 'Supplier', width: 120 },
-    { key: 'purchaseOrder', title: 'PO Number', width: 130 },
-    { key: 'currentLocation', title: 'Current Location', width: 150 },
-    { key: 'estimatedDelivery', title: 'Est. Delivery', width: 130 },
-    { key: 'actualDelivery', title: 'Actual Delivery', width: 130 },
-    { key: 'quantity', title: 'Qty', width: 70 },
-    { key: 'assignedDc', title: 'Assigned DC', width: 120 },
-    { key: 'trackingNumber', title: 'Tracking #', width: 140 },
-    { key: 'notes', title: 'Notes', width: 200 },
-    { key: 'lastUpdate', title: 'Last Update', width: 180, cellRenderer: (row) => new Date(row.lastUpdate).toLocaleString() },
+    { field: 'id', title: 'ID', width: 80 },
+    { field: 'rackName', title: 'Rack Name', width: 150 },
+    { field: 'sku', title: 'SKU', width: 120 },
+    { field: 'supplier', title: 'Supplier', width: 120 },
+    { field: 'purchaseOrder', title: 'PO Number', width: 130 },
+    { field: 'currentLocation', title: 'Current Location', width: 150 },
+    { field: 'estimatedDelivery', title: 'Est. Delivery', width: 130 },
+    { field: 'actualDelivery', title: 'Actual Delivery', width: 130 },
+    { field: 'quantity', title: 'Qty', width: 70 },
+    { field: 'assignedDc', title: 'Assigned DC', width: 120 },
+    { field: 'trackingNumber', title: 'Tracking #', width: 140 },
+    { field: 'notes', title: 'Notes', width: 200 },
+    { field: 'lastUpdate', title: 'Last Update', width: 180, cellRenderer: (row: LogisticsEntry) => new Date(row.lastUpdate).toLocaleString() },
   ];
 
   // Determine which columns to use based on the table title
@@ -301,11 +301,13 @@ const LogisticsTable: React.FC<LogisticsTableProps> = ({ title, data, showDeepDi
         </div>
       </div>
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-primary-500 scrollbar-track-white">
-        <DataTable
+        <AGDataTable
           columns={tableColumns}
           data={data}
           mode={mode}
+          maxSummaryColumns={10}
           maxRows={10}
+          height={300}
         />
       </div>
     </div>
@@ -327,12 +329,12 @@ const DashboardView: React.FC = () => {
     setCurrentAlertForContacts(null);
   }, []);
 
-  const alertColumns = useMemo((): ColumnDef<AlertItem>[] => [
+  const alertColumns = useMemo((): AGColumnDef<AlertItem>[] => [
     {
-      key: 'severity',
+      field: 'severity',
       title: 'Severity',
       width: 120,
-      cellRenderer: (row) => {
+      cellRenderer: (row: AlertItem) => {
         let badgeVariant: BadgeVariant;
         switch(row.severity) {
           case 'critical': badgeVariant = 'critical'; break;
@@ -344,10 +346,10 @@ const DashboardView: React.FC = () => {
       }
     },
     {
-      key: 'sctId',
+      field: 'sctId',
       title: 'SCT ID',
       width: 100,
-      cellRenderer: (row) => (
+      cellRenderer: (row: AlertItem) => (
         <span 
           onClick={() => navigator.clipboard.writeText(row.sctId)}
           title="Copy SCT ID"
@@ -357,29 +359,28 @@ const DashboardView: React.FC = () => {
       )
     },
     {
-      key: 'message',
+      field: 'message',
       title: 'Occurrence',
       width: 300,
-      cellRenderer: (row) => row.message
+      cellRenderer: (row: AlertItem) => row.message
     },
     {
-      key: 'location',
+      field: 'location',
       title: 'Location',
       width: 140,
-      cellRenderer: (row) => row.location
+      cellRenderer: (row: AlertItem) => row.location
     },
     {
-      key: 'timestamp',
+      field: 'timestamp',
       title: 'Event Date',
       width: 180,
-      cellRenderer: (row) => row.timestamp
+      cellRenderer: (row: AlertItem) => row.timestamp
     },
     {
-      key: 'resolutionLog',
+      field: 'resolutionLog',
       title: 'Resolution Log',
       width: 140,
-      align: "center",
-      cellRenderer: (row) => (
+      cellRenderer: (row: AlertItem) => (
         <div className="flex justify-center items-center">
           <Image
             src="/icons/ui/group-chat.svg"
@@ -502,11 +503,13 @@ const DashboardView: React.FC = () => {
                 <button className="px-3 py-1 border border-neutral-300 rounded-md text-sm font-medium text-primary-600 hover:bg-neutral-50">View All</button>
               </div>
               <div className="w-full overflow-x-auto">
-                <DataTable 
+                <AGDataTable 
                   columns={alertColumns} 
                   data={alertData} 
                   mode="deepDive" 
+                  maxSummaryColumns={5}
                   maxRows={5}
+                  height={300}
                   width="100%"
                 />
               </div>
