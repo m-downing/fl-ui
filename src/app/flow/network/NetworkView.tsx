@@ -173,6 +173,7 @@ const incidentColumns: AGColumnDef<NetworkIncident>[] = [
     field: 'severity',
     title: 'Severity',
     width: 100,
+    flex: 1,
     statusAccessor: (row) => {
       if (row.severity === 'critical') return 'error';
       if (row.severity === 'warning') return 'warning';
@@ -192,16 +193,19 @@ const incidentColumns: AGColumnDef<NetworkIncident>[] = [
     field: 'message',
     title: 'Issue',
     width: 250,
+    flex: 2,
   },
   {
     field: 'location',
     title: 'Location',
     width: 180,
+    flex: 1.5,
   },
   {
     field: 'status',
     title: 'Status',
     width: 120,
+    flex: 1,
     cellRenderer: (row) => {
       let color = '';
       switch (row.status) {
@@ -223,6 +227,7 @@ const incidentColumns: AGColumnDef<NetworkIncident>[] = [
     field: 'timestamp',
     title: 'Timestamp',
     width: 150,
+    flex: 1,
   }
 ];
 
@@ -232,6 +237,7 @@ const networkComponentColumns: AGColumnDef<NetworkComponent>[] = [
     field: 'name',
     title: 'Name',
     width: 180,
+    flex: 1.5,
     statusAccessor: (row) => {
       switch (row.status) {
         case 'critical': return 'error';
@@ -251,6 +257,7 @@ const networkComponentColumns: AGColumnDef<NetworkComponent>[] = [
     field: 'type',
     title: 'Type',
     width: 140,
+    flex: 1,
     cellRenderer: (row) => {
       const typeIconMap = {
         router: <RouterIcon fontSize="small" className="mr-1" />,
@@ -271,6 +278,7 @@ const networkComponentColumns: AGColumnDef<NetworkComponent>[] = [
     field: 'status',
     title: 'Status',
     width: 140,
+    flex: 1,
     cellRenderer: (row) => {
       let icon;
       let colorClass = '';
@@ -306,6 +314,7 @@ const networkComponentColumns: AGColumnDef<NetworkComponent>[] = [
     field: 'utilization',
     title: 'Utilization',
     width: 140,
+    flex: 1,
     cellRenderer: (row) => {
       const getUtilizationColor = (value: number) => {
         if (value >= 80) return 'bg-error-500';
@@ -330,6 +339,7 @@ const networkComponentColumns: AGColumnDef<NetworkComponent>[] = [
     field: 'lastUpdated',
     title: 'Last Updated',
     width: 150,
+    flex: 1,
   }
 ];
 
@@ -423,12 +433,16 @@ export const NetworkView: React.FC = () => {
         <Typography variant="body2" className="text-sm text-neutral-500 mb-4">
           Active and recent network infrastructure incidents
         </Typography>
-        <AGDataTable 
-          columns={incidentColumns} 
-          data={networkIncidents} 
-          mode="drilldown" 
-          maxRows={5}
-        />
+        <div className="w-full overflow-x-auto">
+          <AGDataTable 
+            columns={incidentColumns} 
+            data={networkIncidents} 
+            mode="drilldown" 
+            maxRows={5}
+            height={300}
+            width="100%"
+          />
+        </div>
       </Paper>
       
       {/* Network Utilization and Equipment Distribution */}
@@ -587,12 +601,16 @@ export const NetworkView: React.FC = () => {
         <Typography variant="body2" className="text-sm text-neutral-500 mb-4">
           Status of critical network infrastructure equipment
         </Typography>
-        <AGDataTable 
-          columns={networkComponentColumns} 
-          data={networkComponents} 
-          mode="deepDive" 
-          maxRows={5}
-        />
+        <div className="w-full overflow-x-auto">
+          <AGDataTable 
+            columns={networkComponentColumns} 
+            data={networkComponents} 
+            mode="deepDive" 
+            maxRows={5}
+            height={300}
+            width="100%"
+          />
+        </div>
       </Paper>
       
       {/* Incident Detail Modal - Removed as it's no longer reachable */}

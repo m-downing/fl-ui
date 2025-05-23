@@ -194,6 +194,7 @@ const backlogColumns: ColumnDef<BacklogItem>[] = [
     field: 'priority',
     title: 'Priority',
     width: 100,
+    flex: 1,
     statusAccessor: (row) => {
       if (row.priority === 'critical') return 'error';
       if (row.priority === 'high') return 'warning';
@@ -217,6 +218,7 @@ const backlogColumns: ColumnDef<BacklogItem>[] = [
     field: 'dataCenter',
     title: 'Data Center',
     width: 140,
+    flex: 1,
     cellRenderer: (row) => (
       <div className="flex flex-col">
         <span className="font-medium">{row.dataCenter}</span>
@@ -228,6 +230,7 @@ const backlogColumns: ColumnDef<BacklogItem>[] = [
     field: 'rackType',
     title: 'Equipment',
     width: 160,
+    flex: 1.5,
     cellRenderer: (row) => (
       <div className="flex flex-col">
         <span className="font-medium">{row.rackType}</span>
@@ -239,11 +242,13 @@ const backlogColumns: ColumnDef<BacklogItem>[] = [
     field: 'quantity',
     title: 'Qty',
     width: 70,
+    flex: 0.5,
   },
   {
     field: 'status',
     title: 'Status',
     width: 160,
+    flex: 1.5,
     cellRenderer: (row) => {
       const statusText = {
         orderPlaced: 'Order Placed',
@@ -272,6 +277,7 @@ const backlogColumns: ColumnDef<BacklogItem>[] = [
     field: 'delay',
     title: 'Delay (days)',
     width: 120,
+    flex: 1,
     cellRenderer: (row) => {
       let colorClass = 'text-neutral-600';
       if (row.delay > 30) colorClass = 'text-error-500';
@@ -285,6 +291,7 @@ const backlogColumns: ColumnDef<BacklogItem>[] = [
     field: 'expectedDelivery',
     title: 'Expected Delivery',
     width: 150,
+    flex: 1,
   }
 ];
 
@@ -468,32 +475,44 @@ const BacklogsView: React.FC = () => {
         
         {/* All Backlogs Tab */}
         <TabPanel value={tabValue} index={0}>
-          <DataTable 
-            columns={backlogColumns} 
-            data={backlogItems} 
-            mode="deepDive" 
-            // Removed onRowClick as it's not supported by DataTable component
-          />
+          <div className="w-full overflow-x-auto">
+            <DataTable 
+              columns={backlogColumns} 
+              data={backlogItems} 
+              mode="deepDive" 
+              width="100%"
+              height={300}
+              // Removed onRowClick as it's not supported by DataTable component
+            />
+          </div>
         </TabPanel>
         
         {/* Critical Backlogs Tab */}
         <TabPanel value={tabValue} index={1}>
-          <DataTable 
-            columns={backlogColumns} 
-            data={backlogItems.filter(item => item.priority === 'critical')} 
-            mode="deepDive" 
-            // Removed onRowClick as it's not supported by DataTable component
-          />
+          <div className="w-full overflow-x-auto">
+            <DataTable 
+              columns={backlogColumns} 
+              data={backlogItems.filter(item => item.priority === 'critical')} 
+              mode="deepDive" 
+              width="100%"
+              height={300}
+              // Removed onRowClick as it's not supported by DataTable component
+            />
+          </div>
         </TabPanel>
         
         {/* Blocked Orders Tab */}
         <TabPanel value={tabValue} index={2}>
-          <DataTable 
-            columns={backlogColumns} 
-            data={backlogItems.filter(item => item.status === 'blocked')} 
-            mode="deepDive" 
-            // Removed onRowClick as it's not supported by DataTable component
-          />
+          <div className="w-full overflow-x-auto">
+            <DataTable 
+              columns={backlogColumns} 
+              data={backlogItems.filter(item => item.status === 'blocked')} 
+              mode="deepDive" 
+              width="100%"
+              height={300}
+              // Removed onRowClick as it's not supported by DataTable component
+            />
+          </div>
         </TabPanel>
         
         {/* Analysis Tab */}
