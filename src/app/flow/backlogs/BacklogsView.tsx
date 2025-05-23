@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Paper, 
   Typography, 
@@ -292,19 +292,21 @@ const backlogColumns: ColumnDef<BacklogItem>[] = [
 function TabPanel(props: { children: React.ReactNode; value: number; index: number; }) {
   const { children, value, index, ...other } = props;
 
+  // Only render content when the tab is active
+  if (value !== index) {
+    return <div role="tabpanel" hidden aria-labelledby={`backlog-tab-${index}`} />;
+  }
+
   return (
     <div
       role="tabpanel"
-      hidden={value !== index}
       id={`backlog-tabpanel-${index}`}
       aria-labelledby={`backlog-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ py: 3 }}>
-          {children}
-        </Box>
-      )}
+      <Box sx={{ py: 3 }}>
+        {children}
+      </Box>
     </div>
   );
 }
@@ -315,6 +317,16 @@ const BacklogsView: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
   const [filterRegion, setFilterRegion] = useState('all');
   const [filterPriority, setFilterPriority] = useState('all');
+  const [tabsReady, setTabsReady] = useState(false);
+  
+  useEffect(() => {
+    // Delay tabs rendering to avoid measurement issues
+    const timer = setTimeout(() => {
+      setTabsReady(true);
+    }, 150);
+    
+    return () => clearTimeout(timer);
+  }, []);
   
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -333,6 +345,27 @@ const BacklogsView: React.FC = () => {
   const criticalBacklogs = backlogItems.filter(item => item.priority === 'critical').length;
   const blockedBacklogs = backlogItems.filter(item => item.status === 'blocked').length;
   const avgDelay = Math.round(backlogItems.reduce((sum, item) => sum + item.delay, 0) / totalBacklogs);
+  
+  // Render the tabs without scrolling
+  const renderTabs = () => {
+    if (!tabsReady) {
+      return <div className="h-12 border-b border-neutral-200"></div>;
+    }
+    
+    return (
+      <Tabs 
+        value={tabValue} 
+        onChange={handleTabChange} 
+        aria-label="Backlog categories"
+        variant="fullWidth"
+      >
+        <Tab label="All Backlogs" />
+        <Tab label="Critical Backlogs" />
+        <Tab label="Blocked Orders" />
+        <Tab label="Analysis" />
+      </Tabs>
+    );
+  };
   
   return (
     <div className="p-6">
@@ -430,18 +463,7 @@ const BacklogsView: React.FC = () => {
       {/* Backlog Tabs */}
       <Paper className="mb-6">
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs 
-            value={tabValue} 
-            onChange={handleTabChange} 
-            aria-label="Backlog categories"
-            variant="scrollable"
-            scrollButtons="auto"
-          >
-            <Tab label="All Backlogs" />
-            <Tab label="Critical Backlogs" />
-            <Tab label="Blocked Orders" />
-            <Tab label="Analysis" />
-          </Tabs>
+          {renderTabs()}
         </Box>
         
         {/* All Backlogs Tab */}

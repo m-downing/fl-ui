@@ -54,7 +54,7 @@ export default function FlowUIPage() {
   return (
     <div className="pt-14 px-6 max-w-[1600px] mx-auto">
       {activeTab === 'Snapshot' && <DashboardView />}
-      {activeTab === 'Backlogs' && <BacklogsView />}
+      {activeTab === 'Backlogs' && <BacklogsView key="backlogs" />}
       {activeTab === 'KPI\'s' && <KPIsView />}
       {activeTab === 'Network' && <NetworkView />}
     </div>
