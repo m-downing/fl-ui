@@ -187,11 +187,11 @@ export const PieChart: React.FC<PieChartProps> = ({
             cy="50%"
             outerRadius={mode === 'summary' ? '90%' : '70%'}
             innerRadius={mode === 'summary' ? '65%' : '45%'}
-            fill={chartTokens.status.accent} // Default fill, overridden by Cell
+            fill={chartTokens.status.primary} // Changed from accent to primary
             paddingAngle={currentPaddingAngle}
             cornerRadius={currentCornerRadius}
-            labelLine={mode !== 'summary'}
-            label={mode === 'deepDive' ? internalLabelFormatter : undefined}
+            labelLine={mode !== 'summary' && labelFormatter && labelFormatter({} as PieChartDataObject) !== ""}
+            label={mode === 'deepDive' && labelFormatter && labelFormatter({} as PieChartDataObject) !== "" ? internalLabelFormatter : undefined}
             onClick={onElementClick ? (eventData: PieChartDataObject, index: number, e: React.MouseEvent) => onElementClick(eventData, index, e) : undefined}
             isAnimationActive={isInView} // Only animate when in view
             animationBegin={0}

@@ -12,17 +12,23 @@ export const tableTokens = {
   header: {
     bg: designSystemColors.colors.neutral[100],      // Using neutral[100] as an example header background
     color: designSystemColors.colors.neutral[900],    // Using neutral[900] for header text
-    fontSize: designSystemTypography.fontSize.lg,     // Using lg from typography.fontSize
-    fontWeight: designSystemTypography.fontWeight.bold, // Using bold from typography.fontWeight
-    height: '48px',  // Placeholder: typography.ts does not have explicit sizing tokens like 'headerHeight'
+    fontFamily: designSystemTypography.fontFamily.openSans,
+    fontSize: designSystemTypography.fontSize.sm,
+    fontWeight: designSystemTypography.fontWeight.semibold,
+    lineHeight: designSystemTypography.lineHeight.tight,
+    letterSpacing: designSystemTypography.letterSpacing.normal,
+    height: '40px',
     border: `1px solid ${designSystemColors.colors.neutral[300]}`, // Using neutral[300] for borders
   },
   row: {
-    height: '40px',    // Placeholder: typography.ts does not have explicit sizing tokens like 'rowHeight'
+    height: '36px',    // Placeholder: typography.ts does not have explicit sizing tokens like 'rowHeight'
     zebraBg: designSystemColors.colors.neutral[50],    // Using neutral[50] for zebra striping
     hoverBg: designSystemColors.colors.primary[50],    // Using primary[50] for hover background
-    fontSize: designSystemTypography.fontSize.base,   // Using base from typography.fontSize for row text
-    color: designSystemColors.colors.neutral[700],    // Using neutral[700] for row text
+    fontFamily: designSystemTypography.fontFamily.openSans,
+    fontSize: designSystemTypography.fontSize.sm,
+    fontWeight: designSystemTypography.fontWeight.normal,
+    lineHeight: designSystemTypography.lineHeight.normal,
+    color: designSystemColors.colors.neutral[800],    // Using neutral[800] for row text
     borderBottom: `1px solid ${designSystemColors.colors.neutral[200]}`, // Using neutral[200] for a slightly lighter border
   },
   scrollbar: {

@@ -460,6 +460,8 @@ const DashboardView: React.FC = () => {
                   nameKey="name" 
                   height={320} 
                   mode="deepDive"
+                  labelFormatter={(entry) => `${entry.value}`} 
+                  showLegend={true}
                 />
               </div>
             </div>
