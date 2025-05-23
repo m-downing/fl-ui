@@ -39,3 +39,48 @@ html, body {
   background: #f1f1f1; /* Example color for the area the scrollbar moves along */
 }
 
+/* Hide vertical scrollbars but keep horizontal scrollbars in AG Grid tables */
+/* For WebKit browsers (Chrome, Safari, Edge) */
+.ag-body-viewport::-webkit-scrollbar:vertical {
+  width: 0 !important;
+  display: none !important;
+}
+
+/* Keep horizontal scrollbars styled nicely */
+.ag-body-viewport::-webkit-scrollbar:horizontal {
+  height: 8px !important;
+}
+
+.ag-body-viewport::-webkit-scrollbar-thumb:horizontal {
+  background: #888;
+  border-radius: 4px;
+}
+
+/* For Firefox */
+.ag-body-viewport {
+  scrollbar-width: thin;
+  scrollbar-color: #888 transparent;
+}
+
+/* For IE and Edge */
+.ag-body-viewport {
+  -ms-overflow-style: auto;
+}
+
+/* Hide unwanted scrollbars from other elements */
+.ag-center-cols-viewport::-webkit-scrollbar,
+.ag-center-cols-container::-webkit-scrollbar {
+  display: none !important;
+}
+
+.ag-center-cols-viewport,
+.ag-center-cols-container {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* Ensure content is still scrollable */
+.ag-body-viewport {
+  overflow: auto !important;
+}
+

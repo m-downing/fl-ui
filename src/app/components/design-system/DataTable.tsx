@@ -36,6 +36,7 @@ export interface AGDataTableProps<T = Record<string, unknown>> {
   height?: number | string;
   width?: number | string;
   onRowClick?: (data: T) => void;
+  suppressVerticalScroll?: boolean;
 }
 
 // Extended ICellRendererParams with our custom properties
@@ -122,7 +123,8 @@ export function AGDataTable<T = Record<string, unknown>>({
   maxRows,
   height = 400,
   width = '100%',
-  onRowClick
+  onRowClick,
+  suppressVerticalScroll = false
 }: AGDataTableProps<T>) {
   const gridRef = useRef<AgGridReact>(null);
   const gridApiRef = useRef<GridApi | null>(null);
@@ -198,7 +200,15 @@ export function AGDataTable<T = Record<string, unknown>>({
     if (mode === 'summary') {
       params.api.sizeColumnsToFit();
     }
-  }, [mode]);
+    
+    // Apply scrollbar settings
+    if (suppressVerticalScroll) {
+      const gridBodyElement = document.querySelector('.ag-body-viewport');
+      if (gridBodyElement) {
+        (gridBodyElement as HTMLElement).style.overflow = 'hidden';
+      }
+    }
+  }, [mode, suppressVerticalScroll]);
 
   const onRowClicked = useCallback((event: { data: T }) => {
     if (onRowClick) {
@@ -219,7 +229,7 @@ export function AGDataTable<T = Record<string, unknown>>({
         rowData={data}
         columnDefs={columnDefs}
         onGridReady={onGridReady}
-        onRowClicked={onRowClicked}
+        onRowClicked={onRowClick ? onRowClicked : undefined}
         
         // Base settings
         animateRows={animateRows}
@@ -244,6 +254,47 @@ export function AGDataTable<T = Record<string, unknown>>({
         }
         .summary-row:hover {
           background-color: #f8fafc !important;
+        }
+      `}</style>
+      
+      {/* Global styles to hide scrollbars but maintain scrolling functionality */}
+      <style jsx global>{`
+        /* Target all scrollable elements in AG Grid */
+        .ag-root-wrapper *::-webkit-scrollbar,
+        .ag-body-viewport::-webkit-scrollbar,
+        .ag-center-cols-viewport::-webkit-scrollbar,
+        .ag-center-cols-container::-webkit-scrollbar,
+        .ag-body-horizontal-scroll-viewport::-webkit-scrollbar {
+          width: 0 !important;
+          height: 0 !important;
+          display: none !important;
+          background: transparent !important;
+        }
+        
+        /* Firefox */
+        .ag-root-wrapper *,
+        .ag-body-viewport,
+        .ag-center-cols-viewport,
+        .ag-center-cols-container,
+        .ag-body-horizontal-scroll-viewport {
+          scrollbar-width: none !important;
+        }
+        
+        /* IE and Edge */
+        .ag-root-wrapper *,
+        .ag-body-viewport,
+        .ag-center-cols-viewport,
+        .ag-center-cols-container,
+        .ag-body-horizontal-scroll-viewport {
+          -ms-overflow-style: none !important;
+        }
+        
+        /* Force no scrollbars but keep scrollable functionality */
+        .ag-root-wrapper .ag-body-viewport,
+        .ag-root-wrapper .ag-center-cols-viewport,
+        .ag-root-wrapper .ag-center-cols-container,
+        .ag-root-wrapper .ag-body-horizontal-scroll-viewport {
+          overflow: auto !important;
         }
       `}</style>
     </div>

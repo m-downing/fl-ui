@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import clsx from 'clsx';
 // Removed MUI imports: Grid, Paper, Box, Typography, Divider, Button, IconButton, Chip
@@ -256,6 +256,7 @@ interface LogisticsTableProps {
 
 const LogisticsTable: React.FC<LogisticsTableProps> = ({ title, data, showDeepDive = false, deepDiveUrl }) => {
   const [mode, setMode] = useState<'summary' | 'drilldown' | 'deepDive'>('summary');
+  const tableContainerRef = useRef<HTMLDivElement>(null);
   
   // Handler for opening deep dive in new tab
   const handleOpenDeepDiveInNewTab = useCallback(() => {
@@ -299,6 +300,40 @@ const LogisticsTable: React.FC<LogisticsTableProps> = ({ title, data, showDeepDi
 
   // Determine which columns to use based on the table title
   const tableColumns = title === "Warehouse Inventory & Allocation" ? warehouseColumns : logisticsColumns;
+
+  // Effect to directly hide scrollbars after component mounts
+  useEffect(() => {
+    if (tableContainerRef.current) {
+      // Wait for AG Grid to fully initialize
+      setTimeout(() => {
+        if (tableContainerRef.current) {
+          // Find all scrollable elements inside this container
+          const scrollElements = tableContainerRef.current.querySelectorAll('.ag-body-viewport, .ag-center-cols-viewport');
+          
+          // Apply styles directly to each element
+          scrollElements.forEach(el => {
+            const element = el as HTMLElement;
+            // Use type assertion to avoid TypeScript error with msOverflowStyle
+            (element.style as any).msOverflowStyle = 'none';  // IE and Edge
+            element.style.scrollbarWidth = 'none';   // Firefox
+            
+            // For Chrome, Safari, and Opera we need to use a stylesheet
+            const styleSheet = document.createElement('style');
+            styleSheet.textContent = `
+              .${title.replace(/\s+/g, '-').toLowerCase()}-scrollbar-hide::-webkit-scrollbar {
+                display: none !important;
+                width: 0 !important;
+                height: 0 !important;
+              }
+            `;
+            document.head.appendChild(styleSheet);
+            
+            element.classList.add(`${title.replace(/\s+/g, '-').toLowerCase()}-scrollbar-hide`);
+          });
+        }
+      }, 500); // Wait for AG Grid to fully render
+    }
+  }, [title]);
 
   return (
     <div className="bg-white shadow-md rounded-lg p-4 relative block">
@@ -359,7 +394,7 @@ const LogisticsTable: React.FC<LogisticsTableProps> = ({ title, data, showDeepDi
           )}
         </div>
       </div>
-      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-primary-500 scrollbar-track-white">
+      <div className="w-full overflow-x-auto">
         <AGDataTable
           columns={tableColumns}
           data={data}
@@ -367,6 +402,7 @@ const LogisticsTable: React.FC<LogisticsTableProps> = ({ title, data, showDeepDi
           maxSummaryColumns={10}
           maxRows={10}
           height={300}
+          width="100%"
         />
       </div>
     </div>
