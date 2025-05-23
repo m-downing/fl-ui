@@ -25,8 +25,8 @@ export default function MainLoadingSpinner() {
             <Image 
               src="/icons/ui/loading.svg" 
               alt="Loading" 
-              width={48} 
-              height={48} 
+              width={32} 
+              height={32} 
               className="rotating-spinner"
             />
           </div>

@@ -509,10 +509,7 @@ const DashboardView: React.FC = () => {
             <div className="bg-white shadow-md rounded-lg p-4">
               <div className="flex justify-between items-center mb-2">
                 <h6 className="text-lg font-medium text-neutral-800">
-                  <div className="flex items-center">
-                    <span className="mr-2 text-yellow-500">⚠️</span>
-                    Critical Alerts
-                  </div>
+                  Critical Alerts
                 </h6>
                 <button className="px-3 py-1 border border-neutral-300 rounded-md text-sm font-medium text-primary-600 hover:bg-neutral-50">View All</button>
               </div>
