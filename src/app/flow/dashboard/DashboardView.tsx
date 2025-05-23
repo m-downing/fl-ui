@@ -256,7 +256,7 @@ interface LogisticsTableProps {
 
 const LogisticsTable: React.FC<LogisticsTableProps> = ({ title, data, showDeepDive = false, deepDiveUrl }) => {
   const [mode, setMode] = useState<'summary' | 'drilldown' | 'deepDive'>('summary');
-  const tableContainerRef = useRef<HTMLDivElement>(null);
+  const tableRef = useRef<HTMLDivElement>(null);
   
   // Handler for opening deep dive in new tab
   const handleOpenDeepDiveInNewTab = useCallback(() => {
@@ -264,6 +264,42 @@ const LogisticsTable: React.FC<LogisticsTableProps> = ({ title, data, showDeepDi
       window.open(deepDiveUrl, '_blank');
     }
   }, [deepDiveUrl]);
+  
+  // Effect to hide scrollbars after render
+  useEffect(() => {
+    // Use a timeout to ensure the AG Grid has fully rendered
+    const timer = setTimeout(() => {
+      if (tableRef.current) {
+        // Find all scrollable elements within this table
+        const scrollableElements = tableRef.current.querySelectorAll('.ag-body-viewport, .ag-center-cols-viewport');
+        
+        scrollableElements.forEach(element => {
+          // Apply styles directly to hide vertical scrollbars
+          if (element instanceof HTMLElement) {
+            element.style.overflowY = 'auto';
+            // Add an inline style element to hide scrollbars for this specific element
+            const styleEl = document.createElement('style');
+            const elementId = `scrollable-${Math.random().toString(36).substring(2, 11)}`;
+            element.id = elementId;
+            
+            styleEl.textContent = `
+              #${elementId}::-webkit-scrollbar:vertical {
+                width: 0 !important;
+                display: none !important;
+              }
+              #${elementId} {
+                scrollbar-width: none !important;
+                -ms-overflow-style: none !important;
+              }
+            `;
+            document.head.appendChild(styleEl);
+          }
+        });
+      }
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
   
   // Create specific columns for warehouse table (without Status column and Priority first)
   const warehouseColumns: AGColumnDef<LogisticsEntry>[] = [
@@ -300,40 +336,6 @@ const LogisticsTable: React.FC<LogisticsTableProps> = ({ title, data, showDeepDi
 
   // Determine which columns to use based on the table title
   const tableColumns = title === "Warehouse Inventory & Allocation" ? warehouseColumns : logisticsColumns;
-
-  // Effect to directly hide scrollbars after component mounts
-  useEffect(() => {
-    if (tableContainerRef.current) {
-      // Wait for AG Grid to fully initialize
-      setTimeout(() => {
-        if (tableContainerRef.current) {
-          // Find all scrollable elements inside this container
-          const scrollElements = tableContainerRef.current.querySelectorAll('.ag-body-viewport, .ag-center-cols-viewport');
-          
-          // Apply styles directly to each element
-          scrollElements.forEach(el => {
-            const element = el as HTMLElement;
-            // Use type assertion to avoid TypeScript error with msOverflowStyle
-            (element.style as any).msOverflowStyle = 'none';  // IE and Edge
-            element.style.scrollbarWidth = 'none';   // Firefox
-            
-            // For Chrome, Safari, and Opera we need to use a stylesheet
-            const styleSheet = document.createElement('style');
-            styleSheet.textContent = `
-              .${title.replace(/\s+/g, '-').toLowerCase()}-scrollbar-hide::-webkit-scrollbar {
-                display: none !important;
-                width: 0 !important;
-                height: 0 !important;
-              }
-            `;
-            document.head.appendChild(styleSheet);
-            
-            element.classList.add(`${title.replace(/\s+/g, '-').toLowerCase()}-scrollbar-hide`);
-          });
-        }
-      }, 500); // Wait for AG Grid to fully render
-    }
-  }, [title]);
 
   return (
     <div className="bg-white shadow-md rounded-lg p-4 relative block">
@@ -394,7 +396,17 @@ const LogisticsTable: React.FC<LogisticsTableProps> = ({ title, data, showDeepDi
           )}
         </div>
       </div>
-      <div className="w-full overflow-x-auto">
+      <div className="w-full overflow-x-auto no-vertical-scrollbar" ref={tableRef}>
+        <style jsx>{`
+          .no-vertical-scrollbar::-webkit-scrollbar:vertical {
+            width: 0 !important;
+            display: none !important;
+          }
+          .no-vertical-scrollbar {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+          }
+        `}</style>
         <AGDataTable
           columns={tableColumns}
           data={data}
@@ -663,15 +675,19 @@ const DashboardView: React.FC = () => {
         {/* Fifth Row - Logistics Tables */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-1">
-            <LogisticsTable title="Incoming Rack Shipments" data={logisticsData1} showDeepDive={false} />
+            <div className="hide-vert-scrollbar">
+              <LogisticsTable title="Incoming Rack Shipments" data={logisticsData1} showDeepDive={false} />
+            </div>
           </div>
           <div className="md:col-span-1">
-            <LogisticsTable 
-              title="Warehouse Inventory & Allocation" 
-              data={logisticsData2} 
-              showDeepDive={true}
-              deepDiveUrl="/flow/dashboard/warehouse-deep-dive" 
-            />
+            <div className="hide-vert-scrollbar">
+              <LogisticsTable 
+                title="Warehouse Inventory & Allocation" 
+                data={logisticsData2} 
+                showDeepDive={true}
+                deepDiveUrl="/flow/dashboard/warehouse-deep-dive" 
+              />
+            </div>
           </div>
         </div>
 

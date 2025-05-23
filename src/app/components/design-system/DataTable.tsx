@@ -219,6 +219,7 @@ export function AGDataTable<T = Record<string, unknown>>({
   return (
     <div 
       className="ag-theme-alpine"
+      data-mode={mode}
       style={{ 
         height: typeof height === 'number' ? `${height}px` : height,
         width: typeof width === 'number' ? `${width}px` : width,
