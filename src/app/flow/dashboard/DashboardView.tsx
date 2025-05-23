@@ -390,7 +390,7 @@ const DashboardView: React.FC = () => {
       width: 140,
       flex: 1,
       cellRenderer: (row: AlertItem) => (
-        <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center h-full">
           <Image
             src="/icons/ui/group-chat.svg"
             alt="Resolution Log"
