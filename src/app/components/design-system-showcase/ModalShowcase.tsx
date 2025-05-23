@@ -80,7 +80,7 @@ export function ModalShowcase() {
             </div>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setShowFormModal(false)}>Cancel</Button>
-              <Button variant="primary" onClick={() => { alert('Business case submitted for review'); setShowFormModal(false); }}>Submit for Approval</Button>
+              <Button variant="primary" onClick={() => { alert("Business case submitted for review"); setShowFormModal(false); }}>Submit for Approval</Button>
             </div>
           </div>
         }
@@ -330,7 +330,7 @@ export function ModalShowcase() {
                       <p className="text-xs text-neutral-500">09:30:12</p>
                     </div>
                     <div className="mt-1 p-2 bg-neutral-100 rounded-lg">
-                      <p className="text-sm">Has Facilities been notified? We need to ensure this doesn't impact the trading platform SLAs.</p>
+                      <p className="text-sm">Has Facilities been notified? We need to ensure this doesn&apos;t impact the trading platform SLAs.</p>
                     </div>
                   </div>
                 </div>

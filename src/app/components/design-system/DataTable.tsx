@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback, useRef } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import { ColDef, GridApi, GridReadyEvent, ModuleRegistry, ICellRendererParams, RowClickedEvent, GridOptions } from 'ag-grid-enterprise';
+import { ColDef, GridApi, GridReadyEvent, ModuleRegistry, ICellRendererParams } from 'ag-grid-enterprise';
 import { AllCommunityModule } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -15,7 +15,7 @@ type DetailLevel = 'summary' | 'drilldown' | 'deepDive';
 
 // Add statusAccessor to the ColDef interface
 interface ExtendedColDef extends ColDef {
-  statusAccessor?: (row: any) => 'success' | 'warning' | 'error';
+  statusAccessor?: (row: Record<string, unknown>) => 'success' | 'warning' | 'error';
 }
 
 export interface AGColumnDef<T = Record<string, unknown>> extends Omit<ColDef, 'field'> {
@@ -147,7 +147,7 @@ export function AGDataTable<T = Record<string, unknown>>({
         renderer = StatusCellRenderer;
       } else if (cellRenderer) {
         // Convert our row-based renderer to AG Grid params-based renderer
-        renderer = (params: any) => cellRenderer(params.data);
+        renderer = (params: ICellRendererParams) => cellRenderer(params.data as T);
       }
       
       return {
@@ -217,7 +217,7 @@ export function AGDataTable<T = Record<string, unknown>>({
     }
   }, [mode]);
 
-  const onRowClicked = useCallback((event: any) => {
+  const onRowClicked = useCallback((event: { data: T }) => {
     if (onRowClick) {
       onRowClick(event.data);
     }

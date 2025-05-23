@@ -709,7 +709,7 @@ const DashboardView: React.FC = () => {
                         <p className="text-xs text-neutral-500">{new Date(Date.now() - 300000).toLocaleTimeString()}</p>
                       </div>
                       <div className="mt-1 p-2 bg-neutral-100 rounded-lg">
-                        <p className="text-sm">What's the current impact on operations?</p>
+                        <p className="text-sm">What&apos;s the current impact on operations?</p>
                       </div>
                     </div>
                   </div>
@@ -747,7 +747,7 @@ const DashboardView: React.FC = () => {
                         <p className="text-xs text-neutral-500">{new Date(Date.now() - 180000).toLocaleTimeString()}</p>
                       </div>
                       <div className="mt-1 p-2 bg-neutral-100 rounded-lg">
-                        <p className="text-sm">Confirmed. We've temporarily rerouted workloads from affected racks. Facilities team is en route to assess hardware.</p>
+                        <p className="text-sm">Confirmed. We&apos;ve temporarily rerouted workloads from affected racks. Facilities team is en route to assess hardware.</p>
                       </div>
                     </div>
                   </div>

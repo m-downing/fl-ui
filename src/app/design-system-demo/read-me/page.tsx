@@ -15,7 +15,7 @@ export default function DesignSystemReadmePage() {
           It aims to accelerate development while ensuring a cohesive user experience across all applications.
         </p>
         <p>
-          This design system combines modern development practices with JPMC's design guidelines to create
+          This design system combines modern development practices with JPMC&apos;s design guidelines to create
           interfaces that are both functional and visually appealing.
         </p>
       </Card>
@@ -55,7 +55,7 @@ function MyComponent() {
         </p>
         
         <h3 className="text-xl font-medium mb-2 text-neutral-700">Setup</h3>
-        <p className="mb-2">Add the design system's Tailwind configuration to your project:</p>
+        <p className="mb-2">Add the design system&apos;s Tailwind configuration to your project:</p>
         <div className="bg-neutral-800 text-neutral-50 p-4 rounded-md font-mono text-sm mb-4 overflow-x-auto">
           <pre>{`// tailwind.config.js
 const flowUiPreset = require('@jpmc/flow-ui-design-system/tailwind-preset');
@@ -67,7 +67,7 @@ module.exports = {
     './src/**/*.{js,ts,jsx,tsx}',
     './node_modules/@jpmc/flow-ui-design-system/**/*.js',
   ],
-  // You can extend the design system's theme if needed
+  // You can extend the design system&apos;s theme if needed
   theme: {
     extend: {
       // Your customizations
@@ -116,7 +116,7 @@ module.exports = {
             <span className="font-medium">New features first:</span> Apply the design system to new features while gradually updating existing ones.
           </li>
           <li>
-            <span className="font-medium">Maintain visual consistency:</span> Use the design system's color tokens and typography even in components that haven't been fully migrated.
+            <span className="font-medium">Maintain visual consistency:</span> Use the design system&apos;s color tokens and typography even in components that haven&apos;t been fully migrated.
           </li>
         </ol>
         
@@ -134,7 +134,7 @@ module.exports = {
         <div className="bg-warning-50 border-l-4 border-warning-500 p-4 rounded-sm">
           <h4 className="font-medium text-neutral-800 mb-1">Recommendation</h4>
           <p className="text-neutral-700">
-            Start by incorporating the design system's color scheme and typography into your existing components,
+            Start by incorporating the design system&apos;s color scheme and typography into your existing components,
             then gradually replace components starting with the most frequently used ones.
           </p>
         </div>
