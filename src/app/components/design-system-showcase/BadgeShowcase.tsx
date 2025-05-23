@@ -34,7 +34,7 @@ export function BadgeShowcase() {
       </div>
       
       <div className="mb-8">
-        <h3 className="text-lg font-semibold mb-4">Supply Chain Status Badges</h3>
+        <h3 className="text-lg font-semibold mb-4">Supply Chain Status Badges (Regular Size)</h3>
         <div className="flex flex-wrap gap-2">
           <Badge variant="planned">Planned</Badge>
           <Badge variant="ordered">Ordered</Badge>
@@ -49,9 +49,26 @@ export function BadgeShowcase() {
           <Badge variant="delayed">Delayed</Badge>
         </div>
       </div>
+
+      <div className="mb-8">
+        <h3 className="text-lg font-semibold mb-4">Supply Chain Status Badges (Small Size)</h3>
+        <div className="flex flex-wrap gap-2">
+          <Badge variant="planned" size="small">Planned</Badge>
+          <Badge variant="ordered" size="small">Ordered</Badge>
+          <Badge variant="manufacturing" size="small">Manufacturing</Badge>
+          <Badge variant="qualityTesting" size="small">Quality Testing</Badge>
+          <Badge variant="readyToShip" size="small">Ready to Ship</Badge>
+          <Badge variant="inTransit" size="small">In Transit</Badge>
+          <Badge variant="delivered" size="small">Delivered</Badge>
+          <Badge variant="installing" size="small">Installing</Badge>
+          <Badge variant="active" size="small">Active</Badge>
+          <Badge variant="maintenance" size="small">Maintenance</Badge>
+          <Badge variant="delayed" size="small">Delayed</Badge>
+        </div>
+      </div>
       
       <div className="mb-8">
-        <h3 className="text-lg font-semibold mb-4">Priority/Risk Badges</h3>
+        <h3 className="text-lg font-semibold mb-4">Priority/Risk Badges (Regular Size)</h3>
         <div className="flex flex-wrap gap-2">
           <Badge variant="critical">Critical</Badge>
           <Badge variant="highPriority">High Priority</Badge>
@@ -59,13 +76,26 @@ export function BadgeShowcase() {
           <Badge variant="atRisk">At Risk</Badge>
         </div>
       </div>
+
+      <div className="mb-8">
+        <h3 className="text-lg font-semibold mb-4">Priority/Risk Badges (Small Size)</h3>
+        <div className="flex flex-wrap gap-2">
+          <Badge variant="critical" size="small">Critical</Badge>
+          <Badge variant="highPriority" size="small">High Priority</Badge>
+          <Badge variant="standard" size="small">Standard</Badge>
+          <Badge variant="atRisk" size="small">At Risk</Badge>
+        </div>
+      </div>
       
       <div>
         <h3 className="text-lg font-semibold mb-4">Usage in Application</h3>
         <div className="bg-neutral-50 p-4 rounded-md">
           <pre className="text-sm">
-{`// Simple badge usage
+{`// Simple badge usage (regular size)
 <Badge variant="ordered">Ordered</Badge>
+
+// Small size badge
+<Badge variant="ordered" size="small">Ordered</Badge>
 
 // With click handler
 <Badge 

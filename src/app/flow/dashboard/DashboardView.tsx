@@ -168,11 +168,6 @@ const logisticsData2 = generateLogisticsData(30, 'LOG2');
 
 // Column definitions for logistics table
 const logisticsColumns: ColumnDef<LogisticsEntry>[] = [
-  { key: 'id', title: 'ID', width: 80 },
-  { key: 'rackName', title: 'Rack Name', width: 150 },
-  { key: 'sku', title: 'SKU', width: 120 },
-  { key: 'supplier', title: 'Supplier', width: 120 },
-  { key: 'purchaseOrder', title: 'PO Number', width: 130 },
   { 
     key: 'status', 
     title: 'Status', 
@@ -188,9 +183,14 @@ const logisticsColumns: ColumnDef<LogisticsEntry>[] = [
         case 'Delayed': badgeVariant = 'delayed'; break;
         default: badgeVariant = 'standard';
       }
-      return <Badge variant={badgeVariant}>{row.status}</Badge>;
+      return <Badge variant={badgeVariant} size="small">{row.status}</Badge>;
     }
   },
+  { key: 'id', title: 'ID', width: 80 },
+  { key: 'rackName', title: 'Rack Name', width: 150 },
+  { key: 'sku', title: 'SKU', width: 120 },
+  { key: 'supplier', title: 'Supplier', width: 120 },
+  { key: 'purchaseOrder', title: 'PO Number', width: 130 },
   { key: 'currentLocation', title: 'Current Location', width: 150 },
   { key: 'estimatedDelivery', title: 'Est. Delivery', width: 130 },
   { key: 'actualDelivery', title: 'Actual Delivery', width: 130 },
@@ -206,7 +206,7 @@ const logisticsColumns: ColumnDef<LogisticsEntry>[] = [
         case 'Low': badgeVariant = 'standard'; break;
         default: badgeVariant = 'standard';
       }
-      return <Badge variant={badgeVariant}>{row.priority}</Badge>;
+      return <Badge variant={badgeVariant} size="small">{row.priority}</Badge>;
     }
   },
   { key: 'quantity', title: 'Qty', width: 70 },
@@ -251,7 +251,42 @@ interface LogisticsTableProps {
 const LogisticsTable: React.FC<LogisticsTableProps> = ({ title, data }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const toggleExpand = () => setIsExpanded(!isExpanded);
-  const displayedColumns = isExpanded ? logisticsColumns : logisticsColumns.slice(0, 5);
+  
+  // Create specific columns for warehouse table (without Status column and Priority first)
+  const warehouseColumns: ColumnDef<LogisticsEntry>[] = [
+    { 
+      key: 'priority', 
+      title: 'Priority', 
+      width: 100,
+      cellRenderer: (row) => {
+        let badgeVariant: BadgeVariant;
+        switch(row.priority) {
+          case 'High': badgeVariant = 'critical'; break;
+          case 'Medium': badgeVariant = 'highPriority'; break;
+          case 'Low': badgeVariant = 'standard'; break;
+          default: badgeVariant = 'standard';
+        }
+        return <Badge variant={badgeVariant} size="small">{row.priority}</Badge>;
+      }
+    },
+    { key: 'id', title: 'ID', width: 80 },
+    { key: 'rackName', title: 'Rack Name', width: 150 },
+    { key: 'sku', title: 'SKU', width: 120 },
+    { key: 'supplier', title: 'Supplier', width: 120 },
+    { key: 'purchaseOrder', title: 'PO Number', width: 130 },
+    { key: 'currentLocation', title: 'Current Location', width: 150 },
+    { key: 'estimatedDelivery', title: 'Est. Delivery', width: 130 },
+    { key: 'actualDelivery', title: 'Actual Delivery', width: 130 },
+    { key: 'quantity', title: 'Qty', width: 70 },
+    { key: 'assignedDc', title: 'Assigned DC', width: 120 },
+    { key: 'trackingNumber', title: 'Tracking #', width: 140 },
+    { key: 'notes', title: 'Notes', width: 200 },
+    { key: 'lastUpdate', title: 'Last Update', width: 180, cellRenderer: (row) => new Date(row.lastUpdate).toLocaleString() },
+  ];
+
+  // Determine which columns to use based on the table title
+  const tableColumns = title === "Warehouse Inventory & Allocation" ? warehouseColumns : logisticsColumns;
+  const displayedColumns = isExpanded ? tableColumns : tableColumns.slice(0, 5);
 
   return (
     <div className="bg-white shadow-md rounded-lg p-4 relative block">
@@ -321,7 +356,7 @@ const DashboardView: React.FC = () => {
           case 'update': badgeVariant = 'standard'; break;
           default: badgeVariant = 'standard';
         }
-        return <Badge variant={badgeVariant}>{row.severity.toUpperCase()}</Badge>;
+        return <Badge variant={badgeVariant} size="small">{row.severity.toUpperCase()}</Badge>;
       }
     },
     {

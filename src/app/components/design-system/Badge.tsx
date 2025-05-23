@@ -38,6 +38,8 @@ interface BadgeProps {
   onClick?: (event: React.MouseEvent<HTMLSpanElement>) => void;
   /** Additional class names to apply */
   className?: string;
+  /** Size of the badge - defaults to regular */
+  size?: 'small' | 'regular';
 }
 
 const Badge: React.FC<BadgeProps> = ({
@@ -45,6 +47,7 @@ const Badge: React.FC<BadgeProps> = ({
   variant,
   onClick,
   className = '',
+  size = 'regular',
 }) => {
   // Get colors from our badge color system
   const colorConfig = badgeColors[variant];
@@ -72,6 +75,11 @@ const Badge: React.FC<BadgeProps> = ({
   // Transform text to uppercase for priority/risk badges
   const content = isPriorityBadge ? children?.toString().toUpperCase() : children;
   
+  // Size classes
+  const sizeClasses = size === 'small' 
+    ? 'px-1.5 py-0.5 text-xs' 
+    : 'px-2 py-1.5 text-xs';
+    
   return (
     <span
       style={style}
@@ -79,11 +87,9 @@ const Badge: React.FC<BadgeProps> = ({
         inline-flex
         items-center
         justify-center
-        px-2
-        py-1.5
-        text-xs
+        ${sizeClasses}
         font-semibold
-        rounded-md
+        rounded-full
         ${cursorClass}
         ${className}
       `}
