@@ -14,6 +14,7 @@ import { DataTable, ColumnDef } from '@/app/components/design-system/DataTable';
 import Modal from '@/app/components/design-system/Modal';
 import Badge from '@/app/components/design-system/Badge';
 import Button from '@/app/components/design-system/Button';
+import TableToggle from '@/app/components/design-system/TableToggle';
 
 // Define BadgeVariant type to match what's in the Badge component
 type BadgeVariant = 
@@ -246,11 +247,11 @@ const rackTypeData = [
 interface LogisticsTableProps {
   title: string;
   data: LogisticsEntry[];
+  showDeepDive?: boolean;
 }
 
-const LogisticsTable: React.FC<LogisticsTableProps> = ({ title, data }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const toggleExpand = () => setIsExpanded(!isExpanded);
+const LogisticsTable: React.FC<LogisticsTableProps> = ({ title, data, showDeepDive = false }) => {
+  const [mode, setMode] = useState<'summary' | 'drilldown' | 'deepDive'>('summary');
   
   // Create specific columns for warehouse table (without Status column and Priority first)
   const warehouseColumns: ColumnDef<LogisticsEntry>[] = [
@@ -286,41 +287,24 @@ const LogisticsTable: React.FC<LogisticsTableProps> = ({ title, data }) => {
 
   // Determine which columns to use based on the table title
   const tableColumns = title === "Warehouse Inventory & Allocation" ? warehouseColumns : logisticsColumns;
-  const displayedColumns = isExpanded ? tableColumns : tableColumns.slice(0, 5);
 
   return (
     <div className="bg-white shadow-md rounded-lg p-4 relative block">
-      <div className="flex justify-between items-center mb-2">
-        <h6 className="text-lg font-medium text-neutral-800 mb-6">{title}</h6>
-        <div className="absolute top-3 right-3 overflow-hidden bg-white hover:bg-white rounded-md flex items-center w-16 h-7">
-          <button 
-            onClick={toggleExpand} 
-            className="flex items-center w-full h-full relative"
-          >
-            <Image 
-              src="/icons/ui/rocket.svg" 
-              alt="Rocket" 
-              className="w-7 h-5 absolute right-1"
-              width={28}
-              height={20}
-            />
-            <div className={`absolute inset-y-0 right-0 w-7 bg-white hover:bg-white flex justify-center items-center transition-transform duration-300 ${isExpanded ? '-translate-x-8 delay-120' : 'translate-x-0'}`}>
-              <Image 
-                src={isExpanded ? "/icons/ui/remove.svg" : "/icons/ui/expand_icon.svg"} 
-                alt={isExpanded ? "Collapse" : "Expand"} 
-                className="w-5 h-5"
-                width={20}
-                height={20}
-              />
-            </div>
-          </button>
+      <div className="flex justify-between items-center mb-6">
+        <h6 className="text-lg font-medium text-neutral-800">{title}</h6>
+        <div className="absolute top-3 right-3">
+          <TableToggle 
+            mode={mode} 
+            onChange={setMode} 
+            showDeepDive={showDeepDive} 
+          />
         </div>
       </div>
-      <div className={isExpanded ? "overflow-x-auto scrollbar-thin scrollbar-thumb-primary-500 scrollbar-track-white" : "overflow-x-hidden"}>
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-primary-500 scrollbar-track-white">
         <DataTable
-          columns={displayedColumns}
+          columns={tableColumns}
           data={data}
-          mode="deepDive"
+          mode={mode}
           maxRows={10}
         />
       </div>
@@ -365,7 +349,6 @@ const DashboardView: React.FC = () => {
       width: 100,
       cellRenderer: (row) => (
         <span 
-          style={{ cursor: 'url(/icons/ui/paste.png) 16 16, auto' }}
           onClick={() => navigator.clipboard.writeText(row.sctId)}
           title="Copy SCT ID"
         >
@@ -576,10 +559,10 @@ const DashboardView: React.FC = () => {
         {/* Fifth Row - Logistics Tables */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-1">
-            <LogisticsTable title="Incoming Rack Shipments" data={logisticsData1} />
+            <LogisticsTable title="Incoming Rack Shipments" data={logisticsData1} showDeepDive={false} />
           </div>
           <div className="md:col-span-1">
-            <LogisticsTable title="Warehouse Inventory & Allocation" data={logisticsData2} />
+            <LogisticsTable title="Warehouse Inventory & Allocation" data={logisticsData2} showDeepDive={true} />
           </div>
         </div>
 
