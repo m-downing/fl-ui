@@ -1,8 +1,8 @@
 import React, { useMemo, useCallback, useRef } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import { ColDef, GridApi, GridReadyEvent, ModuleRegistry } from 'ag-grid-enterprise';
+import { ColDef, GridApi, GridReadyEvent, ModuleRegistry, ICellRendererParams, RowClickedEvent, GridOptions } from 'ag-grid-enterprise';
 import { AllCommunityModule } from 'ag-grid-community';
-import { AllEnterpriseModule, IntegratedChartsModule } from 'ag-grid-enterprise';
+import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 // Register AG Grid modules
 ModuleRegistry.registerModules([AllCommunityModule, AllEnterpriseModule]);
@@ -13,7 +13,12 @@ import 'ag-grid-enterprise';
 
 type DetailLevel = 'summary' | 'drilldown' | 'deepDive';
 
-export interface AGColumnDef<T = any> extends Omit<ColDef, 'field'> {
+// Add statusAccessor to the ColDef interface
+interface ExtendedColDef extends ColDef {
+  statusAccessor?: (row: any) => 'success' | 'warning' | 'error';
+}
+
+export interface AGColumnDef<T = Record<string, unknown>> extends Omit<ColDef, 'field'> {
   field: string;
   title: string;
   statusAccessor?: (row: T) => 'success' | 'warning' | 'error';
@@ -22,7 +27,7 @@ export interface AGColumnDef<T = any> extends Omit<ColDef, 'field'> {
   width?: number;
 }
 
-export interface AGDataTableProps<T = any> {
+export interface AGDataTableProps<T = Record<string, unknown>> {
   columns: AGColumnDef<T>[];
   data: T[];
   mode?: DetailLevel;
@@ -33,14 +38,23 @@ export interface AGDataTableProps<T = any> {
   onRowClick?: (data: T) => void;
 }
 
+// Extended ICellRendererParams with our custom properties
+interface CustomCellRendererParams extends ICellRendererParams {
+  mode?: DetailLevel;
+  colDef?: ExtendedColDef;
+}
+
 // Status cell renderer for different modes
-const StatusCellRenderer = ({ value, data, colDef, api }: any) => {
-  const mode = api.getGridOption('mode') as DetailLevel;
-  const statusAccessor = colDef.statusAccessor;
+const StatusCellRenderer = (params: CustomCellRendererParams) => {
+  const { value, data, colDef } = params;
+  const mode = params.mode || 'summary';
   
-  if (!statusAccessor) return value;
+  // Safely access statusAccessor with proper type checking
+  const statusAccessor = colDef?.statusAccessor;
   
-  const status = statusAccessor(data) as 'success' | 'warning' | 'error';
+  if (!statusAccessor || !data) return value;
+  
+  const status = statusAccessor(data);
   const statusColors = {
     success: '#10B981',
     warning: '#F59E0B', 
@@ -100,7 +114,7 @@ const StatusCellRenderer = ({ value, data, colDef, api }: any) => {
   }
 };
 
-export function AGDataTable<T = any>({
+export function AGDataTable<T = Record<string, unknown>>({
   columns,
   data,
   mode = 'summary',
@@ -125,7 +139,7 @@ export function AGDataTable<T = any>({
     }
 
     return visibleColumns.map((col): ColDef => {
-      const { field, title, statusAccessor, summaryPriority, cellRenderer, ...restColProps } = col;
+      const { field, title, statusAccessor, cellRenderer, ...restColProps } = col;
       
       // Determine which cell renderer to use
       let renderer;
@@ -150,7 +164,8 @@ export function AGDataTable<T = any>({
         // Set the renderer
         cellRenderer: renderer,
         cellRendererParams: {
-          statusAccessor
+          statusAccessor,
+          mode // Pass the mode to the cell renderer
         },
         
         // Apply any other column config
@@ -263,9 +278,22 @@ export function AGDataTable<T = any>({
 // For backward compatibility
 export const DataTable = AGDataTable;
 
+// Define a stronger type for our example data
+interface RackData {
+  rackId: string;
+  datacenter: string;
+  utilization: number;
+  location: string;
+  vendor: string;
+  overallStatus: 'success' | 'warning' | 'error';
+  installDate: string;
+  powerUsage: number;
+  temperature: number;
+}
+
 // Example usage for rack logistics:
 export const RackLogisticsTable = () => {
-  const rackColumns: AGColumnDef[] = [
+  const rackColumns: AGColumnDef<RackData>[] = [
     {
       field: 'rackId',
       title: 'Rack ID',
@@ -320,7 +348,7 @@ export const RackLogisticsTable = () => {
   ];
 
   const [mode, setMode] = React.useState<DetailLevel>('summary');
-  const [rackData] = React.useState([
+  const [rackData] = React.useState<RackData[]>([
     {
       rackId: 'R-NYC-001',
       datacenter: 'NYC Primary',

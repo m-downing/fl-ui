@@ -673,18 +673,11 @@ const DashboardView: React.FC = () => {
                 <h4 className="text-sm font-medium text-neutral-700">Resolution Log</h4>
               </div>
               <div 
-                className="p-3 max-h-60 overflow-y-auto" 
+                className="p-3 max-h-60 overflow-y-auto scrollbar-hide" 
                 style={{ 
-                  minHeight: "240px", 
-                  scrollbarWidth: 'none',
-                  msOverflowStyle: 'none'
+                  minHeight: "240px"
                 }}
               >
-                <style jsx>{`
-                  .chat-scroll::-webkit-scrollbar {
-                    display: none;
-                  }
-                `}</style>
                 {/* Example messages - you can replace with actual data */}
                 <div className="mb-3">
                   <div className="flex items-start gap-2">

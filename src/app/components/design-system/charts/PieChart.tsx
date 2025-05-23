@@ -145,7 +145,7 @@ export const PieChart: React.FC<PieChartProps> = ({
   let chartColors: string[];
   let currentShowLegend = true;
   let currentPaddingAngle = 0;
-  let currentCornerRadius = cornerRadius; // Use the provided cornerRadius or default to 0
+  const currentCornerRadius = cornerRadius; // Use the provided cornerRadius or default to 0
 
   switch (mode) {
     case 'summary':

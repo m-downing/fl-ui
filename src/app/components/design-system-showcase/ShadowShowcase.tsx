@@ -3,43 +3,37 @@ import { shadows } from '@/app/components/design-system/tokens/shadows';
 import { Badge } from '@/app/components/design-system';
 import { MetricCard, ProgressTracker, PieChart } from '@/app/components/design-system/charts';
 
-// Information icon for README button
-const InfoIcon = (
-  <svg 
-    className="w-5 h-5" 
-    fill="currentColor" 
-    viewBox="0 0 330 330" 
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path d="M165 0C74.019 0 0 74.02 0 165.001 0 255.982 74.019 330 165 330s165-74.018 165-164.999S255.981 0 165 0zm0 300c-74.44 0-135-60.56-135-134.999S90.56 30 165 30s135 60.562 135 135.001C300 239.44 239.439 300 165 300z" />
-    <path d="M164.998 70c-11.026 0-19.996 8.976-19.996 20.009 0 11.023 8.97 19.991 19.996 19.991 11.026 0 19.996-8.968 19.996-19.991 0-11.033-8.97-20.009-19.996-20.009zM165 140c-8.284 0-15 6.716-15 15v90c0 8.284 6.716 15 15 15 8.284 0 15-6.716 15-15v-90c0-8.284-6.716-15-15-15z" />
-  </svg>
-);
-
-interface ShadowDefinition {
-  name: keyof typeof shadows;
-  value: string;
-  tailwindClass: string;
-}
-
-// Assuming these Tailwind classes correspond to your shadow tokens
-const shadowDefinitions: ShadowDefinition[] = [
-  { name: 'sm', value: shadows.sm, tailwindClass: 'shadow-sm' },
-  { name: 'md', value: shadows.md, tailwindClass: 'shadow-md' },
-  { name: 'lg', value: shadows.lg, tailwindClass: 'shadow-lg' },
-  // If you had an 'xl' or '2xl' in your tokens, they would be:
-  // { name: 'xl', value: shadows.xl, tailwindClass: 'shadow-xl' },
-  // { name: '2xl', value: shadows.xl, tailwindClass: 'shadow-2xl' },
-  // If you had an 'inner' shadow:
-  // { name: 'inner', value: shadows.inner, tailwindClass: 'shadow-inner' },
-];
-
 // Sample data for PieChart
 const pieChartData = [
   { name: 'Group A', value: 400 },
   { name: 'Group B', value: 300 },
   { name: 'Group C', value: 200 },
 ];
+
+const ShadowCard: React.FC<{ shadowName: string; shadowValue: string }> = ({ shadowName, shadowValue }) => (
+  <div className="flex flex-col items-center">
+    <div className="w-full max-w-xs mb-4">
+      {/* Apply shadow directly to the MetricCard by extending its style */}
+      <div 
+        className="rounded-lg overflow-hidden" 
+        style={{ boxShadow: shadowValue }}
+      >
+        <MetricCard 
+          label="Revenue Target" 
+          value="$1.2M" 
+          delta={12} 
+          trend="up" 
+          status="success" 
+        />
+      </div>
+    </div>
+    <div className="text-sm text-center max-w-xs w-full py-2">
+      <p className="text-xs text-neutral-600">Tailwind: <code>.shadow-{shadowName}</code></p>
+      <p className="font-medium text-neutral-800 mt-1">Token: <code>shadows.{shadowName}</code></p>
+      <p className="text-xs text-neutral-500 mt-1 break-all">CSS: <code>{shadowValue}</code></p>
+    </div>
+  </div>
+);
 
 export function ShadowShowcase() {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
@@ -67,28 +61,7 @@ export function ShadowShowcase() {
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {/* First Shadow - MetricCard with shadow-sm */}
-        <div className="flex flex-col items-center">
-          <div className="w-full max-w-xs mb-4">
-            {/* Apply shadow directly to the MetricCard by extending its style */}
-            <div 
-              className="rounded-lg overflow-hidden" 
-              style={{ boxShadow: shadows.sm }}
-            >
-              <MetricCard 
-                label="Revenue Target" 
-                value="$1.2M" 
-                delta={12} 
-                trend="up" 
-                status="success" 
-              />
-            </div>
-          </div>
-          <div className="text-sm text-center max-w-xs w-full py-2">
-            <p className="text-xs text-neutral-600">Tailwind: <code>.shadow-sm</code></p>
-            <p className="font-medium text-neutral-800 mt-1">Token: <code>shadows.sm</code></p>
-            <p className="text-xs text-neutral-500 mt-1 break-all">CSS: <code>{shadows.sm}</code></p>
-          </div>
-        </div>
+        <ShadowCard shadowName="sm" shadowValue={shadows.sm} />
 
         {/* Second Shadow - Hoverable ProgressTracker with shadow-md */}
         <div className="flex flex-col items-center">

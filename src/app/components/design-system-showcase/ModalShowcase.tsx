@@ -3,19 +3,6 @@ import Modal from '@/app/components/design-system/Modal';
 import Button from '@/app/components/design-system/Button';
 import Input from '@/app/components/design-system/Input';
 
-// Information icon for README button
-const InfoIcon = (
-  <svg 
-    className="w-5 h-5" 
-    fill="currentColor" 
-    viewBox="0 0 330 330" 
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path d="M165 0C74.019 0 0 74.02 0 165.001 0 255.982 74.019 330 165 330s165-74.018 165-164.999S255.981 0 165 0zm0 300c-74.44 0-135-60.56-135-134.999S90.56 30 165 30s135 60.562 135 135.001C300 239.44 239.439 300 165 300z" />
-    <path d="M164.998 70c-11.026 0-19.996 8.976-19.996 20.009 0 11.023 8.97 19.991 19.996 19.991 11.026 0 19.996-8.968 19.996-19.991 0-11.033-8.97-20.009-19.996-20.009zM165 140c-8.284 0-15 6.716-15 15v90c0 8.284 6.716 15 15 15 8.284 0 15-6.716 15-15v-90c0-8.284-6.716-15-15-15z" />
-  </svg>
-);
-
 const ShowcaseSection: React.FC<{ title: string; children: React.ReactNode; className?: string }> = 
   ({ title, children, className }) => (
   <div className={`mb-8 p-4 border border-neutral-200 rounded-lg bg-white shadow-sm ${className || ''}`}>
@@ -32,13 +19,6 @@ export function ModalShowcase() {
   const [showNoOverlayCloseModal, setShowNoOverlayCloseModal] = useState(false);
   const [showCenteredModal, setShowCenteredModal] = useState(false);
   const [showIssueTrackerModal, setShowIssueTrackerModal] = useState(false);
-
-  const DemoFooter = ({ onClose }: { onClose: () => void }) => (
-    <div className="flex justify-end gap-2">
-      <Button variant="outline" onClick={onClose}>Cancel</Button>
-      <Button variant="primary" onClick={() => { alert('Confirmed!'); onClose(); }}>Confirm</Button>
-    </div>
-  );
 
   return (
     <div>
