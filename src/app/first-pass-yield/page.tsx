@@ -3,11 +3,8 @@
 import React, { useState } from 'react';
 import NavigationHeader        from '@/app/first-pass-yield/components/NavigationHeader';
 import FirstPassYieldSummary   from '@/app/first-pass-yield/components/FirstPassYieldSummary';
-import FirstPassYieldDrilldown from '@/app/first-pass-yield/components/FirstPassYieldDrilldown';
-import FirstPassYieldDeepDive  from '@/app/first-pass-yield/components/FirstPassYieldDeepDive';
 
 export default function FirstPassYieldPage() {
-  const [viewMode, setViewMode] = useState<'summary' | 'drilldown' | 'deepDive'>('summary');
   const [timeRange, setTimeRange] = useState('select');
   const [region, setRegion] = useState('all');
   const [priority, setPriority] = useState('all');
@@ -37,9 +34,7 @@ export default function FirstPassYieldPage() {
             onPriorityChange={handlePriorityChange}
           />
         </div>
-        {viewMode === 'summary' && <FirstPassYieldSummary />}
-        {viewMode === 'drilldown' && <FirstPassYieldDrilldown />}
-        {viewMode === 'deepDive' && <FirstPassYieldDeepDive />}
+        <FirstPassYieldSummary />
       </div>
     </div>
   );
