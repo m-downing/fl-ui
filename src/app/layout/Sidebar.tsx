@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { appTabs } from './constants';
-import { ChartBarSquareIcon, ServerStackIcon, BriefcaseIcon, CloudIcon } from '@heroicons/react/24/outline';
+import { ChartBarSquareIcon, ServerStackIcon, BriefcaseIcon, CloudIcon, ChartPieIcon } from '@heroicons/react/24/outline';
 
 export default function Sidebar() {
   const [activeTab, setActiveTab] = useState<string>('Snapshot');
@@ -51,6 +51,8 @@ export default function Sidebar() {
       return <BriefcaseIcon className="w-6 h-6 text-neutral-50" />;
     } else if (iconName === 'Cloud') {
       return <CloudIcon className="w-6 h-6 text-neutral-50" />;
+    } else if (iconName === 'ChartPie') {
+      return <ChartPieIcon className="w-6 h-6 text-neutral-50" />;
     } else {
       return (
         <Image 
