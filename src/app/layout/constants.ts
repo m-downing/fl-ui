@@ -2,7 +2,7 @@
 export const dashboardTab = {
   name: "Snapshot",
   icon: "ChartBarSquare",
-  path: "/flow"
+  path: "/"
 };
 
 // Define app-specific navigation tabs
