@@ -35,7 +35,7 @@ export default function MainLoadingSpinner() {
             fontWeight: 600, 
             fontSize: '18px', 
             margin: 0, 
-            fontFamily: 'var(--font-open-sans), "Open Sans", sans-serif'
+            fontFamily: 'var(--font-body), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
           }}>
             Loading...
           </p>

@@ -1,23 +1,17 @@
 // src/app/layout.tsx
 
 import type { Metadata } from "next";
-import { Poppins, Open_Sans } from "next/font/google";
 import AppWrapper from "./layout/AppWrapper";
 import "./globals.css";
 
+// Define system UI font variables
+const systemUIHeading = {
+  variable: '--font-heading',
+};
 
-const poppins = Poppins({
-  weight: ['300', '400', '500', '600', '700', '800'],
-  subsets: ['latin'],
-  variable: '--font-poppins',
-});
-
-const openSans = Open_Sans({
-  weight: ['300', '400', '600', '700', '800'],
-  subsets: ['latin'],
-  variable: '--font-open-sans',
-});
-
+const systemUIBody = {
+  variable: '--font-body',
+};
 
 export const metadata: Metadata = {
   title: "FLOW | Demo",
@@ -35,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${poppins.variable} ${openSans.variable} antialiased`}
+        className={`${systemUIHeading.variable} ${systemUIBody.variable} antialiased`}
       >
         <AppWrapper>
           {children}

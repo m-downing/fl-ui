@@ -10,7 +10,7 @@ import { typography } from '../tokens/typography';
 
 const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
   <div style={{ marginBottom: '40px', padding: '20px', border: `1px solid ${chartTokens.grid.stroke}`, borderRadius: '8px' }}>
-    <h2 style={{ fontFamily: typography.fontFamily.poppins, fontSize: typography.fontSize['xl'], color: chartTokens.axis.color, marginBottom: '20px' }}>
+    <h2 style={{ fontFamily: typography.fontFamily.heading, fontSize: typography.fontSize['xl'], color: chartTokens.axis.color, marginBottom: '20px' }}>
       {title}
     </h2>
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', alignItems: 'flex-start' }}>
@@ -21,7 +21,7 @@ const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title
 
 const ChartVariant: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
   <div style={{ flex: '1 1 300px', minWidth: '300px' }}>
-    <h3 style={{ fontFamily: typography.fontFamily.openSans, fontSize: typography.fontSize.lg, color: chartTokens.axis.color, marginBottom: '10px' }}>
+    <h3 style={{ fontFamily: typography.fontFamily.body, fontSize: typography.fontSize.lg, color: chartTokens.axis.color, marginBottom: '10px' }}>
       {title}
     </h3>
     {children}
@@ -61,8 +61,8 @@ const mockScatterData: ScatterDataObject[] = [
 
 export const ChartGallery: React.FC = () => {
   return (
-    <div style={{ padding: '20px', fontFamily: typography.fontFamily.openSans }}>
-      <h1 style={{ fontFamily: typography.fontFamily.poppins, fontSize: typography.fontSize['3xl'], marginBottom: '30px', color: chartTokens.status.primary }}>
+    <div style={{ padding: '20px', fontFamily: typography.fontFamily.body }}>
+      <h1 style={{ fontFamily: typography.fontFamily.heading, fontSize: typography.fontSize['3xl'], marginBottom: '30px', color: chartTokens.status.primary }}>
         Chart & Metric Component Gallery
       </h1>
 

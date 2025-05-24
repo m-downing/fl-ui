@@ -132,10 +132,10 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({
   }, []);
 
   if (loading) {
-    return <div style={{ width: width || '100%', height, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: typography.fontFamily.openSans, color: chartTokens.axis.color }}>Loading...</div>;
+    return <div style={{ width: width || '100%', height, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: typography.fontFamily.body, color: chartTokens.axis.color }}>Loading...</div>;
   }
   if (!data || data.length === 0) {
-    return <div style={{ width: width || '100%', height, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: typography.fontFamily.openSans, color: chartTokens.axis.color }}>{emptyState}</div>;
+    return <div style={{ width: width || '100%', height, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: typography.fontFamily.body, color: chartTokens.axis.color }}>{emptyState}</div>;
   }
 
   let chartColors: string[];
@@ -222,7 +222,7 @@ export const ScatterPlot: React.FC<ScatterPlotProps> = ({
                 borderRadius: chartTokens.tooltip.borderRadius,
                 padding: chartTokens.tooltip.padding,
                 fontSize: chartTokens.tooltip.fontSize,
-                fontFamily: typography.fontFamily.openSans,
+                fontFamily: typography.fontFamily.body,
                 border: 'none'
               }}
               cursor={{ strokeDasharray: '3 3' }}

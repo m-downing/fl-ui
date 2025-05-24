@@ -128,7 +128,7 @@ export const PieChart: React.FC<PieChartProps> = ({
 
   if (loading) {
     return (
-      <div style={{ width: width || '100%', height, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: typography.fontFamily.openSans, color: chartTokens.axis.color }}>
+      <div style={{ width: width || '100%', height, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: typography.fontFamily.body, color: chartTokens.axis.color }}>
         Loading chart data...
       </div>
     );
@@ -136,7 +136,7 @@ export const PieChart: React.FC<PieChartProps> = ({
 
   if (!data || data.length === 0) {
     return (
-      <div style={{ width: width || '100%', height, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: typography.fontFamily.openSans, color: chartTokens.axis.color }}>
+      <div style={{ width: width || '100%', height, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: typography.fontFamily.body, color: chartTokens.axis.color }}>
         {emptyState}
       </div>
     );
@@ -204,7 +204,7 @@ export const PieChart: React.FC<PieChartProps> = ({
             <Legend
               wrapperStyle={{
                 fontSize: typography.fontSize.xs,
-                fontFamily: typography.fontFamily.openSans,
+                fontFamily: typography.fontFamily.body,
               }}
             />
           )}
@@ -217,7 +217,7 @@ export const PieChart: React.FC<PieChartProps> = ({
                       borderRadius: chartTokens.tooltip.borderRadius,
                       padding: chartTokens.tooltip.padding,
                       fontSize: chartTokens.tooltip.fontSize,
-                      fontFamily: typography.fontFamily.openSans,
+                      fontFamily: typography.fontFamily.body,
                       border: 'none'
                   }}
                   labelStyle={{

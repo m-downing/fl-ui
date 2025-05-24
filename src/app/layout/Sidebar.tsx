@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { appTabs } from './constants';
+import { ChartBarSquareIcon, ServerStackIcon, BriefcaseIcon, CloudIcon } from '@heroicons/react/24/outline';
 
 export default function Sidebar() {
   const [activeTab, setActiveTab] = useState<string>('Snapshot');
@@ -24,8 +25,31 @@ export default function Sidebar() {
     window.dispatchEvent(new Event('app:change'));
   };
 
+  // Function to render the appropriate icon
+  const renderIcon = (iconName: string) => {
+    if (iconName === 'ChartBarSquare') {
+      return <ChartBarSquareIcon className="w-6 h-6 text-neutral-50" />;
+    } else if (iconName === 'ServerStack') {
+      return <ServerStackIcon className="w-6 h-6 text-neutral-50" />;
+    } else if (iconName === 'Briefcase') {
+      return <BriefcaseIcon className="w-6 h-6 text-neutral-50" />;
+    } else if (iconName === 'Cloud') {
+      return <CloudIcon className="w-6 h-6 text-neutral-50" />;
+    } else {
+      return (
+        <Image 
+          src={iconName}
+          alt={`icon`}
+          width={24}
+          height={24}
+          className="mb-2"
+        />
+      );
+    }
+  };
+
   return (
-    <aside className="sticky top-0 h-screen flex flex-col bg-primary-800/90 w-[100px] font-poppins">
+    <aside className="sticky top-0 h-screen flex flex-col bg-primary-800/90 w-[100px] font-heading">
       {/* Top section - always clickable, links to home */}
       <Link
         href="/"
@@ -42,7 +66,7 @@ export default function Sidebar() {
             height={26}
             className="mb-2 group-hover:opacity-60 transition-opacity duration-50"
           />
-          <h1 className="text-neutral-50 group-hover:text-neutral-50/[.6] text-[14px] tracking-wider font-open-sans transition-colors duration-50">FLOW</h1>
+          <h1 className="text-neutral-50 group-hover:text-neutral-50/[.6] text-[14px] tracking-wider font-body transition-colors duration-50">FLOW</h1>
         </div>
       </Link>
 
@@ -57,13 +81,9 @@ export default function Sidebar() {
             tabIndex={0}
             aria-label={`Go to ${tab.name}`}
           >
-            <Image 
-              src={tab.icon}
-              alt={`${tab.name} icon`}
-              width={24}
-              height={24}
-              className="mb-2"
-            />
+            <div className="mb-2">
+              {renderIcon(tab.icon)}
+            </div>
             <span className="text-neutral-50 text-[11px] tracking-wider">{tab.name}</span>
           </div>
         ))}

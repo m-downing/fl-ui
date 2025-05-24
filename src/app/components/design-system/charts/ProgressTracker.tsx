@@ -58,7 +58,7 @@ export const ProgressTracker: React.FC<ProgressTrackerProps> = ({
   showValueAsTooltip = false, // Default to false
 }) => {
   if (loading) {
-    return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: propSize || (mode === 'summary' ? 50 : 100), fontFamily: typography.fontFamily.openSans, color: chartTokens.axis.color }}>Loading...</div>;
+    return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: propSize || (mode === 'summary' ? 50 : 100), fontFamily: typography.fontFamily.body, color: chartTokens.axis.color }}>Loading...</div>;
   }
 
   // Handle cases where progress isn't meaningful (optional, based on use case)
@@ -83,7 +83,7 @@ export const ProgressTracker: React.FC<ProgressTrackerProps> = ({
 
   return (
     <div 
-      style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', fontFamily: typography.fontFamily.openSans }}
+      style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', fontFamily: typography.fontFamily.body }}
       title={showValueAsTooltip ? displayValue : undefined} // Set title attribute for tooltip
     >
       <svg width={currentSize} height={currentSize} viewBox={`0 0 ${currentSize} ${currentSize}`}>

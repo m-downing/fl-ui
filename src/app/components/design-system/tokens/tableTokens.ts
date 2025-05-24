@@ -12,7 +12,7 @@ export const tableTokens = {
   header: {
     bg: designSystemColors.colors.neutral[100],      // Using neutral[100] as an example header background
     color: designSystemColors.colors.neutral[900],    // Using neutral[900] for header text
-    fontFamily: designSystemTypography.fontFamily.openSans,
+    fontFamily: designSystemTypography.fontFamily.body,
     fontSize: designSystemTypography.fontSize.sm,
     fontWeight: designSystemTypography.fontWeight.semibold,
     lineHeight: designSystemTypography.lineHeight.tight,
@@ -24,7 +24,7 @@ export const tableTokens = {
     height: '36px',    // Placeholder: typography.ts does not have explicit sizing tokens like 'rowHeight'
     zebraBg: designSystemColors.colors.neutral[50],    // Using neutral[50] for zebra striping
     hoverBg: designSystemColors.colors.primary[50],    // Using primary[50] for hover background
-    fontFamily: designSystemTypography.fontFamily.openSans,
+    fontFamily: designSystemTypography.fontFamily.body,
     fontSize: designSystemTypography.fontSize.sm,
     fontWeight: designSystemTypography.fontWeight.normal,
     lineHeight: designSystemTypography.lineHeight.normal,

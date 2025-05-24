@@ -119,10 +119,10 @@ export const LineChart: React.FC<LineChartProps> = ({
   }, []);
 
   if (loading) {
-    return <div style={{ width: width || '100%', height, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: typography.fontFamily.openSans, color: chartTokens.axis.color }}>Loading...</div>;
+    return <div style={{ width: width || '100%', height, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: typography.fontFamily.body, color: chartTokens.axis.color }}>Loading...</div>;
   }
   if (!data || data.length === 0) {
-    return <div style={{ width: width || '100%', height, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: typography.fontFamily.openSans, color: chartTokens.axis.color }}>{emptyState}</div>;
+    return <div style={{ width: width || '100%', height, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: typography.fontFamily.body, color: chartTokens.axis.color }}>{emptyState}</div>;
   }
 
   let chartColors: string[];
@@ -193,7 +193,7 @@ export const LineChart: React.FC<LineChartProps> = ({
                 borderRadius: chartTokens.tooltip.borderRadius,
                 padding: chartTokens.tooltip.padding,
                 fontSize: chartTokens.tooltip.fontSize,
-                fontFamily: typography.fontFamily.openSans,
+                fontFamily: typography.fontFamily.body,
                 border: 'none'
               }}
               itemStyle={{

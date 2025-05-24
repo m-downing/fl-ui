@@ -80,10 +80,9 @@ The primary palette includes blues with the primary brand color being `primary-6
 Typography tokens define font families, sizes, weights, and line heights in `tokens/typography.ts`.
 
 We use the following font families:
-- Geist Sans (UI)
-- Geist Mono (code)
-- Poppins (headings)
-- Open Sans (body text)
+- System UI fonts for all text elements
+- Heading font (for headings and UI elements)
+- Body font (for body text and data display)
 
 ### Shadows
 Shadow tokens define elevation levels in `tokens/shadows.ts`.

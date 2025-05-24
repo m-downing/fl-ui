@@ -4,8 +4,8 @@
 
 export const typography = {
   fontFamily: {
-    poppins: 'var(--font-poppins), sans-serif',
-    openSans: 'var(--font-open-sans), sans-serif',
+    heading: 'var(--font-heading), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    body: 'var(--font-body), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
   },
   fontSize: {
     xs: '0.75rem',    // 12px

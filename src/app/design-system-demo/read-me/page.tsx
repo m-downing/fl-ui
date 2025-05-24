@@ -6,7 +6,7 @@ import { Card } from '@/app/components/design-system';
 export default function DesignSystemReadmePage() {
   return (
     <div className="container mx-auto py-8 px-6 max-w-5xl">
-      <h1 className="text-3xl font-bold text-neutral-800 mb-6 font-poppins">Flow UI Design System</h1>
+      <h1 className="text-3xl font-bold text-neutral-800 mb-6 font-heading">Flow UI Design System</h1>
       
       <Card className="mb-8">
         <h2 className="text-2xl font-semibold mb-4 text-neutral-800">Overview</h2>
@@ -208,7 +208,7 @@ module.exports = {
 
 // Use in JavaScript/TypeScript
 const primaryColor = colors.colors.primary[600]; // #17314a
-const bodyFont = typography.fontFamily.openSans;`}</pre>
+const bodyFont = typography.fontFamily.body;`}</pre>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -226,8 +226,8 @@ const bodyFont = typography.fontFamily.openSans;`}</pre>
           <div>
             <h3 className="font-medium text-lg mb-2">Typography</h3>
             <div className="space-y-2">
-              <p className="font-poppins text-2xl">Heading (Poppins)</p>
-              <p className="font-open-sans">Body (Open Sans)</p>
+              <p className="font-heading text-2xl">Heading (System UI)</p>
+              <p className="font-body">Body (System UI)</p>
               <p className="text-xs">Text xs</p>
               <p className="text-sm">Text sm</p>
               <p className="text-base">Text base</p>

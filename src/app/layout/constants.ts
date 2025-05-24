@@ -1,16 +1,16 @@
 // Define the common Dashboard tab that all apps will have
 export const dashboardTab = {
   name: "Snapshot",
-  icon: "/icons/ui/performance.svg"
+  icon: "ChartBarSquare"
 };
 
 // Define app-specific navigation tabs
 export const appTabs = {
   'flow': [
     dashboardTab,
-    { name: "Backlogs", icon: "/icons/vertical-nav/database.svg" },
-    { name: "KPI's", icon: "/icons/ui/indicator.svg" },
-    { name: "Network", icon: "/icons/vertical-nav/system-cloud.svg" },
+    { name: "Backlogs", icon: "ServerStack" },
+    { name: "KPI's", icon: "Briefcase" },
+    { name: "Network", icon: "Cloud" },
   ],
   helius: [dashboardTab],
   mimir: [dashboardTab],

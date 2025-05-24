@@ -50,7 +50,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
     display: 'flex',
     flexDirection: 'column',
     gap: chartTokens.card.gap,
-    fontFamily: typography.fontFamily.openSans,
+    fontFamily: typography.fontFamily.body,
     backgroundColor: colors.colors.neutral[50], // Light background
     borderLeft: `4px solid ${statusColor}`,
     cursor: onClick ? 'pointer' : 'default',

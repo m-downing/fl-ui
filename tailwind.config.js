@@ -6,8 +6,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        poppins: ["var(--font-poppins)", "sans-serif"],
-        "open-sans": ["var(--font-open-sans)", "sans-serif"],
+        heading: ["var(--font-heading)", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
+        body: ["var(--font-body)", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
       },
       fontSize: {
         xs:   ['0.75rem',  { lineHeight: '1' }],      // 12px

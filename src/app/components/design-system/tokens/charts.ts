@@ -29,8 +29,8 @@ export const chartTokens = {
     // Maps to colors.colors.neutral[500]
     stroke: colors.colors.neutral[500],
     strokeWidth: 1,
-    // Maps to typography.fontFamily.openSans
-    fontFamily: typography.fontFamily.openSans,
+    // Maps to typography.fontFamily.body
+    fontFamily: typography.fontFamily.body,
     // Maps to typography.fontSize.xs
     fontSize: typography.fontSize.xs,
     // Maps to colors.colors.neutral[700]
