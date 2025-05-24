@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import clsx from 'clsx';
@@ -422,7 +423,7 @@ const LogisticsTable: React.FC<LogisticsTableProps> = ({ title, data, showDeepDi
   );
 };
 
-const DashboardView: React.FC = () => {
+const SnapshotView: React.FC = () => {
   // const [isAlertModalOpen, setIsAlertModalOpen] = useState(false); // Removed as unused
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [currentAlertForContacts, setCurrentAlertForContacts] = useState<AlertItem | null>(null);
@@ -1027,4 +1028,4 @@ const DashboardView: React.FC = () => {
   );
 };
 
-export default DashboardView;
+export default SnapshotView;
