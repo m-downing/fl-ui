@@ -3,26 +3,42 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
 import { appTabs } from './constants';
 import { ChartBarSquareIcon, ServerStackIcon, BriefcaseIcon, CloudIcon } from '@heroicons/react/24/outline';
 
 export default function Sidebar() {
   const [activeTab, setActiveTab] = useState<string>('Snapshot');
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
-    // Get the active tab from localStorage when the component mounts
-    const savedTab = localStorage.getItem('activeTab_flux');
-    if (savedTab) {
-      setActiveTab(savedTab);
+    // Determine active tab based on current pathname
+    // Check all flow tabs for matching paths
+    const currentTab = appTabs['flow'].find(tab => tab.path === pathname);
+    if (currentTab) {
+      setActiveTab(currentTab.name);
+      localStorage.setItem('activeTab_flux', currentTab.name);
+    } else {
+      // Fallback to localStorage if no path match
+      const savedTab = localStorage.getItem('activeTab_flux');
+      if (savedTab) {
+        setActiveTab(savedTab);
+      }
     }
-  }, []);
+  }, [pathname]);
 
-  const handleTabClick = (tabName: string) => {
+  const handleTabClick = (tabName: string, tabPath?: string) => {
     setActiveTab(tabName);
     localStorage.setItem('activeTab_flux', tabName);
     
-    // Dispatch event to notify other components of the tab change
-    window.dispatchEvent(new Event('app:change'));
+    // Navigate to the specified path
+    if (tabPath) {
+      router.push(tabPath);
+    } else {
+      // Fallback to the old event system for tabs without paths
+      window.dispatchEvent(new Event('app:change'));
+    }
   };
 
   // Function to render the appropriate icon
@@ -52,7 +68,7 @@ export default function Sidebar() {
     <aside className="sticky top-0 h-screen flex flex-col bg-primary-800/90 w-[100px] font-heading">
       {/* Top section - always clickable, links to home */}
       <Link
-        href="/"
+        href="/flow"
         className="group h-[120px] flex flex-col items-center justify-center pt-2 cursor-pointer transition-colors duration-50 bg-primary-800/90 w-full"
         role="button"
         aria-label="Go to Home"
@@ -76,7 +92,7 @@ export default function Sidebar() {
           <div 
             key={tab.name}
             className={`flex flex-col items-center cursor-pointer group ${activeTab === tab.name ? 'opacity-100' : 'opacity-50'} hover:opacity-100 transition-opacity duration-200`}
-            onClick={() => handleTabClick(tab.name)}
+            onClick={() => handleTabClick(tab.name, tab.path)}
             role="button"
             tabIndex={0}
             aria-label={`Go to ${tab.name}`}

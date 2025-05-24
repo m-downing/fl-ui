@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import DashboardView from './dashboard/DashboardView';
-import BacklogsView from './backlogs/BacklogsView';
 import KPIsView from './kpi/KPIsView';
 import NetworkView from './network/NetworkView';
 import MainLoadingSpinner from '../layout/mainLoadingSpinner';
@@ -10,6 +10,7 @@ import MainLoadingSpinner from '../layout/mainLoadingSpinner';
 export default function FlowUIPage() {
   const [activeTab, setActiveTab] = useState<string>('Snapshot');
   const [isLoading, setIsLoading] = useState(true);
+  const pathname = usePathname();
 
   useEffect(() => {
     // Initial loading when component mounts
@@ -51,10 +52,10 @@ export default function FlowUIPage() {
   }
 
   // Then render the appropriate component based on the active tab with proper spacing
+  // Note: Backlogs now has its own route at /flow/backlogs
   return (
     <div className="pt-14 px-6 max-w-[1600px] mx-auto">
       {activeTab === 'Snapshot' && <DashboardView />}
-      {activeTab === 'Backlogs' && <BacklogsView key="backlogs" />}
       {activeTab === 'KPI\'s' && <KPIsView />}
       {activeTab === 'Network' && <NetworkView />}
     </div>
