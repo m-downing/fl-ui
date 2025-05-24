@@ -10,8 +10,8 @@ export const appTabs = {
   'flow': [
     dashboardTab,
     { name: "Backlogs", icon: "ServerStack", path: "/backlogs" },
-    { name: "KPI's", icon: "Briefcase", path: "/flow" },
-    { name: "Network", icon: "Cloud", path: "/flow" },
+    { name: "KPI's", icon: "Briefcase", path: "/kpi" },
+    { name: "Network", icon: "Cloud", path: "/network" },
   ],
   helius: [dashboardTab],
   mimir: [dashboardTab],
