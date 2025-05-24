@@ -247,17 +247,16 @@ export function AGDataTable<T = Record<string, unknown>>({
         }}
       />
       
-      <style jsx>{`
-        .summary-row {
+      {/* Global styles to hide scrollbars but maintain scrolling functionality */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        .ag-theme-alpine .summary-row {
           cursor: ${onRowClick ? 'pointer' : 'default'};
         }
-        .summary-row:hover {
+        .ag-theme-alpine .summary-row:hover {
           background-color: #f8fafc !important;
         }
-      `}</style>
-      
-      {/* Global styles to hide scrollbars but maintain scrolling functionality */}
-      <style jsx global>{`
+        
         /* Target all scrollable elements in AG Grid */
         .ag-root-wrapper *::-webkit-scrollbar,
         .ag-body-viewport::-webkit-scrollbar,
@@ -295,7 +294,8 @@ export function AGDataTable<T = Record<string, unknown>>({
         .ag-root-wrapper .ag-body-horizontal-scroll-viewport {
           overflow: auto !important;
         }
-      `}</style>
+        `
+      }} />
     </div>
   );
 }
