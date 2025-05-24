@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
-import { MetricCard, BarChart, LineChart, ProgressTracker } from '@/app/components/design-system/charts';
+import { MetricCard, BarChart, LineChart } from '@/app/components/design-system/charts';
 import { DataTable, AGColumnDef } from '@/app/components/design-system/DataTable';
+import Badge from '@/app/components/design-system/Badge';
 import { workstationData, fpyData, throughputData, queueData, QueueChartData } from './mockData';
 
 // Define columns for queue data table
@@ -29,7 +30,19 @@ const queueColumns: AGColumnDef<QueueChartData>[] = [
     field: 'status',
     title: 'Status',
     width: 120,
-    cellRenderer: (row) => <ProgressTracker value={Math.min(100, (row.currentSize / 20) * 100)} mode="summary" status={row.status} />
+    cellRenderer: (row) => {
+      // Map status to badge variants and labels
+      const statusConfig = {
+        success: { variant: 'delivered' as const, label: 'On Track' },
+        warning: { variant: 'atRisk' as const, label: 'At Risk' },
+        error: { variant: 'delayed' as const, label: 'Delayed' },
+        neutral: { variant: 'standard' as const, label: 'Normal' },
+        primary: { variant: 'active' as const, label: 'Active' }
+      };
+      
+      const config = statusConfig[row.status] || statusConfig.neutral;
+      return <Badge variant={config.variant} size="small">{config.label}</Badge>;
+    }
   }
 ];
 
