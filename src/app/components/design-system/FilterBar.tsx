@@ -1,94 +1,101 @@
 import React from 'react';
-import Button from './Button';
-import Select from './Select';
+import { 
+  FormControl,
+  InputLabel,
+  Select as MuiSelect,
+  MenuItem,
+  Button,
+  SelectChangeEvent
+} from '@mui/material';
+import FilterListIcon from '@mui/icons-material/FilterList';
 
 interface FilterBarProps {
   timeRange: string;
   region: string;
+  priority: string;
   onTimeRangeChange: (value: string) => void;
   onRegionChange: (value: string) => void;
+  onPriorityChange: (value: string) => void;
   onMoreFiltersClick?: () => void;
-  timeRangeOptions?: Array<{ value: string; label: string }>;
-  regionOptions?: Array<{ value: string; label: string }>;
   showMoreFilters?: boolean;
 }
 
 const FilterBar: React.FC<FilterBarProps> = ({
   timeRange,
   region,
+  priority,
   onTimeRangeChange,
   onRegionChange,
-  onMoreFiltersClick = () => {},
-  timeRangeOptions = [
-    { value: '30days', label: 'Last 30 Days' },
-    { value: '3months', label: 'Last 3 Months' },
-    { value: '6months', label: 'Last 6 Months' },
-    { value: '1year', label: 'Last Year' },
-    { value: 'custom', label: 'Custom Range' },
-  ],
-  regionOptions = [
-    { value: 'all', label: 'All Regions' },
-    { value: 'nam', label: 'North America' },
-    { value: 'emea', label: 'EMEA' },
-    { value: 'apac', label: 'APAC' },
-    { value: 'latam', label: 'LATAM' },
-  ],
+  onPriorityChange,
   showMoreFilters = true,
 }) => {
-  const handleTimeRangeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    onTimeRangeChange(event.target.value);
+  const handleTimeRangeChange = (event: SelectChangeEvent) => {
+    onTimeRangeChange(event.target.value as string);
   };
 
-  const handleRegionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    onRegionChange(event.target.value);
+  const handleRegionChange = (event: SelectChangeEvent) => {
+    onRegionChange(event.target.value as string);
+  };
+
+  const handlePriorityChange = (event: SelectChangeEvent) => {
+    onPriorityChange(event.target.value as string);
   };
 
   return (
     <div className="flex items-center space-x-3">
-      <div className="w-40">
-        <div className="relative">
-          <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-          </span>
-          <Select
-            label="Time Range"
-            value={timeRange}
-            onChange={handleTimeRangeChange}
-            options={timeRangeOptions.map(option => ({
-              value: option.value,
-              label: option.label
-            }))}
-            className="pl-8"
-          />
-        </div>
-      </div>
+      <FormControl variant="outlined" size="small" style={{ minWidth: 120 }}>
+        <InputLabel>Time Range</InputLabel>
+        <MuiSelect
+          value={timeRange}
+          onChange={handleTimeRangeChange}
+          label="Time Range"
+        >
+          <MenuItem value="select">Select</MenuItem>
+          <MenuItem value="30days">Last 30 Days</MenuItem>
+          <MenuItem value="3months">Last 3 Months</MenuItem>
+          <MenuItem value="6months">Last 6 Months</MenuItem>
+          <MenuItem value="1year">Last Year</MenuItem>
+          <MenuItem value="custom">Custom</MenuItem>
+        </MuiSelect>
+      </FormControl>
       
-      <div className="w-36">
-        <Select
-          label="Region"
+      <FormControl variant="outlined" size="small" style={{ minWidth: 120 }}>
+        <InputLabel>Region</InputLabel>
+        <MuiSelect
           value={region}
           onChange={handleRegionChange}
-          options={regionOptions.map(option => ({
-            value: option.value,
-            label: option.label
-          }))}
-        />
-      </div>
+          label="Region"
+        >
+          <MenuItem value="all">All Regions</MenuItem>
+          <MenuItem value="nam">North America</MenuItem>
+          <MenuItem value="emea">EMEA</MenuItem>
+          <MenuItem value="apac">APAC</MenuItem>
+          <MenuItem value="latam">LATAM</MenuItem>
+        </MuiSelect>
+      </FormControl>
+
+      <FormControl variant="outlined" size="small" style={{ minWidth: 120 }}>
+        <InputLabel>Priority</InputLabel>
+        <MuiSelect
+          value={priority}
+          onChange={handlePriorityChange}
+          label="Priority"
+        >
+          <MenuItem value="all">All Priorities</MenuItem>
+          <MenuItem value="critical">Critical</MenuItem>
+          <MenuItem value="high">High</MenuItem>
+          <MenuItem value="medium">Medium</MenuItem>
+          <MenuItem value="low">Low</MenuItem>
+        </MuiSelect>
+      </FormControl>
       
       {showMoreFilters && (
         <Button
-          variant="outline"
-          size="md"
-          onClick={onMoreFiltersClick}
+          variant="outlined"
+          startIcon={<FilterListIcon />}
+          size="medium"
         >
-          <span className="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-            </svg>
-            More Filters
-          </span>
+          More Filters
         </Button>
       )}
     </div>

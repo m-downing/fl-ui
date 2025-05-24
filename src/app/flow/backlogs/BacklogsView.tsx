@@ -2,19 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { 
   Paper, 
   Typography, 
-  Button, 
   IconButton, 
   Box,
-  FormControl,
-  InputLabel,
-  Select as MuiSelect,
-  MenuItem,
   Tab,
-  Tabs,
-  SelectChangeEvent
+  Tabs
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import FilterListIcon from '@mui/icons-material/FilterList';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
@@ -26,6 +19,7 @@ import {
   // ProgressTracker // Removed as it's unused
 } from '@/app/components/design-system/charts';
 import { DataTable, ColumnDef } from '@/app/components/design-system';
+import FilterBar from '@/app/components/design-system/FilterBar';
 
 // Define interfaces for backlogs data
 interface BacklogItem {
@@ -324,6 +318,7 @@ const BacklogsView: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
   const [filterRegion, setFilterRegion] = useState('all');
   const [filterPriority, setFilterPriority] = useState('all');
+  const [filterTimeRange, setFilterTimeRange] = useState('select');
   const [tabsReady, setTabsReady] = useState(false);
   
   useEffect(() => {
@@ -339,12 +334,16 @@ const BacklogsView: React.FC = () => {
     setTabValue(newValue);
   };
   
-  const handleRegionFilterChange = (event: SelectChangeEvent) => {
-    setFilterRegion(event.target.value as string);
+  const handleRegionFilterChange = (value: string) => {
+    setFilterRegion(value);
   };
   
-  const handlePriorityFilterChange = (event: SelectChangeEvent) => {
-    setFilterPriority(event.target.value as string);
+  const handlePriorityFilterChange = (value: string) => {
+    setFilterPriority(value);
+  };
+
+  const handleTimeRangeFilterChange = (value: string) => {
+    setFilterTimeRange(value);
   };
   
   // Calculate summary metrics
@@ -386,43 +385,14 @@ const BacklogsView: React.FC = () => {
           </Typography>
         </div>
         <div className="flex items-center space-x-3">
-          <FormControl variant="outlined" size="small" style={{ minWidth: 120 }}>
-            <InputLabel>Region</InputLabel>
-            <MuiSelect
-              value={filterRegion}
-              onChange={handleRegionFilterChange}
-              label="Region"
-            >
-              <MenuItem value="all">All Regions</MenuItem>
-              <MenuItem value="nam">North America</MenuItem>
-              <MenuItem value="emea">EMEA</MenuItem>
-              <MenuItem value="apac">APAC</MenuItem>
-              <MenuItem value="latam">LATAM</MenuItem>
-            </MuiSelect>
-          </FormControl>
-          
-          <FormControl variant="outlined" size="small" style={{ minWidth: 120 }}>
-            <InputLabel>Priority</InputLabel>
-            <MuiSelect
-              value={filterPriority}
-              onChange={handlePriorityFilterChange}
-              label="Priority"
-            >
-              <MenuItem value="all">All Priorities</MenuItem>
-              <MenuItem value="critical">Critical</MenuItem>
-              <MenuItem value="high">High</MenuItem>
-              <MenuItem value="medium">Medium</MenuItem>
-              <MenuItem value="low">Low</MenuItem>
-            </MuiSelect>
-          </FormControl>
-          
-          <Button
-            variant="outlined"
-            startIcon={<FilterListIcon />}
-            size="medium"
-          >
-            More Filters
-          </Button>
+          <FilterBar
+            timeRange={filterTimeRange}
+            region={filterRegion}
+            priority={filterPriority}
+            onTimeRangeChange={handleTimeRangeFilterChange}
+            onRegionChange={handleRegionFilterChange}
+            onPriorityChange={handlePriorityFilterChange}
+          />
         </div>
       </div>
       

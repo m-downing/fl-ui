@@ -99,6 +99,7 @@ function TabPanel(props: { children: React.ReactNode; value: number; index: numb
 export const KPIsView: React.FC = () => {
   const [timeRange, setTimeRange] = useState('6months');
   const [region, setRegion] = useState('all');
+  const [priority, setPriority] = useState('all');
   const [tabValue, setTabValue] = useState(0);
   const [tabsReady, setTabsReady] = useState(false);
   
@@ -117,6 +118,10 @@ export const KPIsView: React.FC = () => {
   
   const handleRegionChange = (value: string) => {
     setRegion(value);
+  };
+
+  const handlePriorityChange = (value: string) => {
+    setPriority(value);
   };
   
   const handleMoreFiltersClick = () => {
@@ -169,8 +174,10 @@ export const KPIsView: React.FC = () => {
         <FilterBar
           timeRange={timeRange}
           region={region}
+          priority={priority}
           onTimeRangeChange={handleTimeRangeChange}
           onRegionChange={handleRegionChange}
+          onPriorityChange={handlePriorityChange}
           onMoreFiltersClick={handleMoreFiltersClick}
         />
       </div>

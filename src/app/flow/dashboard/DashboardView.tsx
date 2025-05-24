@@ -16,6 +16,7 @@ import Modal from '@/app/components/design-system/Modal';
 import Badge from '@/app/components/design-system/Badge';
 import Button from '@/app/components/design-system/Button';
 import TableToggle from '@/app/components/design-system/TableToggle';
+import FilterBar from '@/app/components/design-system/FilterBar';
 
 // Define BadgeVariant type to match what's in the Badge component
 type BadgeVariant = 
@@ -511,6 +512,29 @@ const DashboardView: React.FC = () => {
     }
   ], [handleOpenContactModal]);
   
+  // Filter state
+  const [timeRange, setTimeRange] = useState('30days');
+  const [region, setRegion] = useState('all');
+  const [priority, setPriority] = useState('all');
+
+  // Filter handlers
+  const handleTimeRangeChange = (value: string) => {
+    setTimeRange(value);
+  };
+
+  const handleRegionChange = (value: string) => {
+    setRegion(value);
+  };
+
+  const handlePriorityChange = (value: string) => {
+    setPriority(value);
+  };
+
+  const handleMoreFiltersClick = () => {
+    // Handle more filters modal/drawer
+    console.log('More filters clicked');
+  };
+
   return (
     <div className="px-6 py-8 pb-16 bg-neutral-50 min-h-screen">
       <div className="flex justify-between items-center mb-6">
@@ -522,6 +546,16 @@ const DashboardView: React.FC = () => {
             Real-time overview of data center capacity, deployments, and critical alerts
           </p>
         </div>
+        <FilterBar
+          timeRange={timeRange}
+          region={region}
+          priority={priority}
+          onTimeRangeChange={handleTimeRangeChange}
+          onRegionChange={handleRegionChange}
+          onPriorityChange={handlePriorityChange}
+          onMoreFiltersClick={handleMoreFiltersClick}
+          showMoreFilters={true}
+        />
       </div>
       
       <div className="grid grid-cols-1 gap-4">
