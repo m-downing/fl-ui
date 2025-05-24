@@ -165,7 +165,7 @@ const generateLogisticsData = (count: number, prefix: string): LogisticsEntry[] 
   });
 };
 
-const logisticsData1 = generateLogisticsData(25, 'LOG1');
+// Generate logistics data for warehouse inventory
 const logisticsData2 = generateLogisticsData(30, 'LOG2');
 
 // Column definitions for logistics table
@@ -676,13 +676,8 @@ const DashboardView: React.FC = () => {
         </div>
         
         {/* Fifth Row - Logistics Tables */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="md:col-span-1">
-            <div className="hide-vert-scrollbar">
-              <LogisticsTable title="Incoming Rack Shipments" data={logisticsData1} showDeepDive={false} />
-            </div>
-          </div>
-          <div className="md:col-span-1">
+        <div className="grid grid-cols-1 gap-4">
+          <div className="col-span-1">
             <div className="hide-vert-scrollbar">
               <LogisticsTable 
                 title="Warehouse Inventory & Allocation" 

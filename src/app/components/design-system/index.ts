@@ -4,6 +4,7 @@ export { default as Card } from './Card';
 export { default as Input } from './Input';
 export { default as Select } from './Select';
 export { default as Modal } from './Modal';
+export { default as FilterBar } from './FilterBar';
 export { default as Tooltip } from './Tooltip';
 export { default as Badge } from './Badge';
 export { default as TableToggle } from './TableToggle';

@@ -227,26 +227,24 @@ export function AGDataTable<T = Record<string, unknown>>({
     >
       <AgGridReact
         ref={gridRef}
-        rowData={data}
-        columnDefs={columnDefs}
-        onGridReady={onGridReady}
-        onRowClicked={onRowClick ? onRowClicked : undefined}
-        
-        // Base settings
-        animateRows={animateRows}
-        headerHeight={headerHeight}
-        rowHeight={rowHeight}
-        suppressHorizontalScroll={suppressHorizontalScroll}
-        suppressColumnVirtualisation={suppressColumnVirtualisation}
-        rowClass={rowClass}
-        
-        // Pagination
-        pagination={pagination}
-        paginationPageSize={paginationPageSize}
-        paginationPageSizeSelector={paginationPageSizeSelector}
-        
-        // Mode specific options
-        domLayout={domLayout}
+        gridOptions={{
+          rowData: data,
+          columnDefs: columnDefs,
+          onGridReady: onGridReady,
+          onRowClicked: onRowClick ? onRowClicked : undefined,
+          
+          // Move all other props inside gridOptions
+          animateRows: animateRows,
+          headerHeight: headerHeight,
+          rowHeight: rowHeight,
+          suppressHorizontalScroll: suppressHorizontalScroll,
+          suppressColumnVirtualisation: suppressColumnVirtualisation,
+          rowClass: rowClass,
+          pagination: pagination,
+          paginationPageSize: paginationPageSize,
+          paginationPageSizeSelector: paginationPageSizeSelector,
+          domLayout: domLayout
+        }}
       />
       
       <style jsx>{`

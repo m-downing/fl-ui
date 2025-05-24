@@ -12,7 +12,7 @@ interface AppWrapperProps {
 
 // Map of app names to their corresponding browser tab titles
 const APP_TITLES: Record<string, string> = {
-  'FLOW': 'FLUXI',
+  'FLOW': 'FLOW',
 };
 
 // Map of app names to their corresponding favicon paths
@@ -78,7 +78,7 @@ export default function AppWrapper({ children }: AppWrapperProps) {
   return (
     <div className="grid grid-cols-[100px_1fr] min-h-screen min-w-[768px] relative">
       {/* User menu button - replacing Reset button */}
-      <div className="z-50 fixed top-4 right-4 flex flex-col items-center">
+      <div className="z-50 fixed top-5 right-5 flex flex-col items-center">
         <div 
           className="w-[36px] h-[36px] rounded-full bg-primary-700 flex items-center justify-center cursor-pointer hover:bg-primary-800 transition-all duration-50 shadow-md relative"
           role="button"

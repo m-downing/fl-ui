@@ -1,23 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Paper, 
-  Typography, 
-  Divider, 
-  Button, 
-  IconButton, 
-  FormControl, 
-  InputLabel, 
-  Select as MuiSelect, 
-  MenuItem,
-  Box,
-  Tab,
-  Tabs,
-  SelectChangeEvent
-} from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import DateRangeIcon from '@mui/icons-material/DateRange';
-
+import FilterBar from '@/app/components/design-system/FilterBar';
 import { 
   LineChart, 
   BarChart,
@@ -29,7 +11,7 @@ interface KpiTrendData {
   name: string;
   value: number;
   target: number;
-  [key: string]: string | number; // Add index signature, changed from any
+  [key: string]: string | number;
 }
 
 interface RegionalKpiData {
@@ -37,7 +19,7 @@ interface RegionalKpiData {
   procurementEfficiency: number;
   deploymentTime: number;
   utilizationRate: number;
-  [key: string]: string | number; // Add index signature, changed from any
+  [key: string]: string | number;
 }
 
 // Mock data for KPI charts
@@ -84,6 +66,13 @@ const regionalKpiData: RegionalKpiData[] = [
   { name: 'LATAM', procurementEfficiency: 79, deploymentTime: 19, utilizationRate: 72 },
 ];
 
+// MoreIcon component to replace MUI MoreVertIcon
+const MoreIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+  </svg>
+);
+
 // Tab panel component
 function TabPanel(props: { children: React.ReactNode; value: number; index: number; }) {
   const { children, value, index, ...other } = props;
@@ -100,9 +89,9 @@ function TabPanel(props: { children: React.ReactNode; value: number; index: numb
       aria-labelledby={`kpi-tab-${index}`}
       {...other}
     >
-      <Box sx={{ py: 3 }}>
+      <div className="py-3">
         {children}
-      </Box>
+      </div>
     </div>
   );
 }
@@ -122,15 +111,20 @@ export const KPIsView: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
   
-  const handleTimeRangeChange = (event: SelectChangeEvent<string>) => {
-    setTimeRange(event.target.value);
+  const handleTimeRangeChange = (value: string) => {
+    setTimeRange(value);
   };
   
-  const handleRegionChange = (event: SelectChangeEvent<string>) => {
-    setRegion(event.target.value);
+  const handleRegionChange = (value: string) => {
+    setRegion(value);
   };
   
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleMoreFiltersClick = () => {
+    // Implementation for more filters can be added here
+    console.log('More filters clicked');
+  };
+  
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
   
@@ -141,18 +135,23 @@ export const KPIsView: React.FC = () => {
     }
     
     return (
-      <Tabs 
-        value={tabValue} 
-        onChange={handleTabChange} 
-        aria-label="KPI categories"
-        variant="fullWidth"
-      >
-        <Tab label="Overview" />
-        <Tab label="Procurement" />
-        <Tab label="Deployment" />
-        <Tab label="Utilization" />
-        <Tab label="Cost Management" />
-      </Tabs>
+      <div className="border-b border-neutral-200">
+        <div className="flex">
+          {['Overview', 'Procurement', 'Deployment', 'Utilization', 'Cost Management'].map((label, index) => (
+            <button
+              key={index}
+              className={`px-4 py-2 text-sm font-medium ${
+                tabValue === index 
+                  ? 'text-primary-600 border-b-2 border-primary-600' 
+                  : 'text-neutral-600 hover:text-primary-500 hover:border-b-2 hover:border-primary-300'
+              }`}
+              onClick={(e) => handleTabChange(e, index)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
     );
   };
   
@@ -160,53 +159,20 @@ export const KPIsView: React.FC = () => {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <Typography variant="h4" className="font-semibold text-neutral-800">
+          <h4 className="text-2xl font-semibold text-neutral-800">
             Key Performance Indicators
-          </Typography>
-          <Typography variant="body2" className="text-neutral-600">
+          </h4>
+          <p className="text-sm text-neutral-600">
             Monitor and analyze data center supply chain performance metrics
-          </Typography>
+          </p>
         </div>
-        <div className="flex items-center space-x-3">
-          <FormControl variant="outlined" size="small" style={{ minWidth: 150 }}>
-            <InputLabel>Time Range</InputLabel>
-            <MuiSelect
-              value={timeRange}
-              onChange={handleTimeRangeChange}
-              label="Time Range"
-              startAdornment={<DateRangeIcon style={{ marginRight: 8 }} fontSize="small" />}
-            >
-              <MenuItem value="30days">Last 30 Days</MenuItem>
-              <MenuItem value="3months">Last 3 Months</MenuItem>
-              <MenuItem value="6months">Last 6 Months</MenuItem>
-              <MenuItem value="1year">Last Year</MenuItem>
-              <MenuItem value="custom">Custom Range</MenuItem>
-            </MuiSelect>
-          </FormControl>
-          
-          <FormControl variant="outlined" size="small" style={{ minWidth: 120 }}>
-            <InputLabel>Region</InputLabel>
-            <MuiSelect
-              value={region}
-              onChange={handleRegionChange}
-              label="Region"
-            >
-              <MenuItem value="all">All Regions</MenuItem>
-              <MenuItem value="nam">North America</MenuItem>
-              <MenuItem value="emea">EMEA</MenuItem>
-              <MenuItem value="apac">APAC</MenuItem>
-              <MenuItem value="latam">LATAM</MenuItem>
-            </MuiSelect>
-          </FormControl>
-          
-          <Button
-            variant="outlined"
-            startIcon={<FilterListIcon />}
-            size="medium"
-          >
-            More Filters
-          </Button>
-        </div>
+        <FilterBar
+          timeRange={timeRange}
+          region={region}
+          onTimeRangeChange={handleTimeRangeChange}
+          onRegionChange={handleRegionChange}
+          onMoreFiltersClick={handleMoreFiltersClick}
+        />
       </div>
       
       {/* KPI Summary Cards */}
@@ -250,25 +216,23 @@ export const KPIsView: React.FC = () => {
       </div>
       
       {/* KPI Category Tabs */}
-      <Paper className="mb-6">
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          {renderTabs()}
-        </Box>
+      <div className="mb-6 bg-white shadow-md rounded-lg">
+        {renderTabs()}
         
         {/* Overview Tab */}
         <TabPanel value={tabValue} index={0}>
           <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
             <div className="md:col-span-8">
-              <Paper className="p-4">
+              <div className="p-4 bg-white shadow-sm rounded-lg">
                 <div className="flex justify-between items-center mb-2">
-                  <Typography variant="h6" className="font-medium">Regional KPI Comparison</Typography>
-                  <IconButton size="small">
-                    <MoreVertIcon fontSize="small" />
-                  </IconButton>
+                  <h6 className="font-medium">Regional KPI Comparison</h6>
+                  <button className="text-neutral-500 p-1 rounded-full hover:bg-neutral-100">
+                    <MoreIcon />
+                  </button>
                 </div>
-                <Typography variant="body2" className="text-sm text-neutral-500 mb-4">
+                <p className="text-sm text-neutral-500 mb-4">
                   Performance metrics by geographical region
-                </Typography>
+                </p>
                 <div className="h-96">
                   <BarChart 
                     data={regionalKpiData} 
@@ -277,111 +241,111 @@ export const KPIsView: React.FC = () => {
                     height={400}
                   />
                 </div>
-              </Paper>
+              </div>
             </div>
             
             <div className="md:col-span-4">
-              <Paper className="p-4 mb-6">
+              <div className="p-4 mb-6 bg-white shadow-sm rounded-lg">
                 <div className="flex justify-between items-center mb-2">
-                  <Typography variant="h6" className="font-medium">Top Performing Data Centers</Typography>
-                  <IconButton size="small">
-                    <MoreVertIcon fontSize="small" />
-                  </IconButton>
+                  <h6 className="font-medium">Top Performing Data Centers</h6>
+                  <button className="text-neutral-500 p-1 rounded-full hover:bg-neutral-100">
+                    <MoreIcon />
+                  </button>
                 </div>
                 <div className="space-y-4 mt-4">
                   <div className="flex justify-between items-center">
                     <div>
-                      <Typography variant="subtitle2">NYC-WEST-08</Typography>
-                      <Typography variant="body2" className="text-neutral-500">North America</Typography>
+                      <p className="text-sm font-medium">NYC-WEST-08</p>
+                      <p className="text-sm text-neutral-500">North America</p>
                     </div>
-                    <Typography variant="h6" className="text-success-500">94%</Typography>
+                    <p className="text-lg font-medium text-success-500">94%</p>
                   </div>
-                  <Divider />
+                  <hr className="border-neutral-200" />
                   <div className="flex justify-between items-center">
                     <div>
-                      <Typography variant="subtitle2">LONDON-EAST-04</Typography>
-                      <Typography variant="body2" className="text-neutral-500">EMEA</Typography>
+                      <p className="text-sm font-medium">LONDON-EAST-04</p>
+                      <p className="text-sm text-neutral-500">EMEA</p>
                     </div>
-                    <Typography variant="h6" className="text-success-500">92%</Typography>
+                    <p className="text-lg font-medium text-success-500">92%</p>
                   </div>
-                  <Divider />
+                  <hr className="border-neutral-200" />
                   <div className="flex justify-between items-center">
                     <div>
-                      <Typography variant="subtitle2">SINGAPORE-03</Typography>
-                      <Typography variant="body2" className="text-neutral-500">APAC</Typography>
+                      <p className="text-sm font-medium">SINGAPORE-03</p>
+                      <p className="text-sm text-neutral-500">APAC</p>
                     </div>
-                    <Typography variant="h6" className="text-success-500">89%</Typography>
+                    <p className="text-lg font-medium text-success-500">89%</p>
                   </div>
-                  <Divider />
+                  <hr className="border-neutral-200" />
                   <div className="flex justify-between items-center">
                     <div>
-                      <Typography variant="subtitle2">FRANKFURT-02</Typography>
-                      <Typography variant="body2" className="text-neutral-500">EMEA</Typography>
+                      <p className="text-sm font-medium">FRANKFURT-02</p>
+                      <p className="text-sm text-neutral-500">EMEA</p>
                     </div>
-                    <Typography variant="h6" className="text-success-500">87%</Typography>
+                    <p className="text-lg font-medium text-success-500">87%</p>
                   </div>
                 </div>
-              </Paper>
+              </div>
               
-              <Paper className="p-4">
+              <div className="p-4">
                 <div className="flex justify-between items-center mb-2">
-                  <Typography variant="h6" className="font-medium">KPI Achievement</Typography>
-                  <IconButton size="small">
-                    <MoreVertIcon fontSize="small" />
-                  </IconButton>
+                  <h6 className="font-medium">KPI Achievement</h6>
+                  <button className="text-sm text-neutral-500">
+                    <MoreIcon />
+                  </button>
                 </div>
                 <div className="space-y-4 mt-4">
                   <div className="flex items-center">
                     <div className="w-32">
-                      <Typography variant="body2" className="text-neutral-600">Procurement</Typography>
+                      <p className="text-sm text-neutral-600">Procurement</p>
                     </div>
                     <div className="flex-grow bg-neutral-200 h-2 rounded-full">
                       <div className="bg-success-500 h-2 rounded-full" style={{ width: '91%' }}></div>
                     </div>
-                    <Typography variant="body2" className="ml-2 text-success-500">91%</Typography>
+                    <p className="ml-2 text-success-500">91%</p>
                   </div>
                   <div className="flex items-center">
                     <div className="w-32">
-                      <Typography variant="body2" className="text-neutral-600">Deployment</Typography>
+                      <p className="text-sm text-neutral-600">Deployment</p>
                     </div>
                     <div className="flex-grow bg-neutral-200 h-2 rounded-full">
                       <div className="bg-success-500 h-2 rounded-full" style={{ width: '87%' }}></div>
                     </div>
-                    <Typography variant="body2" className="ml-2 text-success-500">87%</Typography>
+                    <p className="ml-2 text-success-500">87%</p>
                   </div>
                   <div className="flex items-center">
                     <div className="w-32">
-                      <Typography variant="body2" className="text-neutral-600">Utilization</Typography>
+                      <p className="text-sm text-neutral-600">Utilization</p>
                     </div>
                     <div className="flex-grow bg-neutral-200 h-2 rounded-full">
                       <div className="bg-success-500 h-2 rounded-full" style={{ width: '78%' }}></div>
                     </div>
-                    <Typography variant="body2" className="ml-2 text-neutral-500">78%</Typography>
+                    <p className="ml-2 text-neutral-500">78%</p>
                   </div>
                   <div className="flex items-center">
                     <div className="w-32">
-                      <Typography variant="body2" className="text-neutral-600">Cost</Typography>
+                      <p className="text-sm text-neutral-600">Cost</p>
                     </div>
                     <div className="flex-grow bg-neutral-200 h-2 rounded-full">
                       <div className="bg-warning-500 h-2 rounded-full" style={{ width: '65%' }}></div>
                     </div>
-                    <Typography variant="body2" className="ml-2 text-warning-500">65%</Typography>
+                    <p className="ml-2 text-warning-500">65%</p>
                   </div>
                 </div>
-              </Paper>
+              </div>
             </div>
             
             <div className="md:col-span-6">
-              <Paper className="p-4">
+              <div className="p-4">
                 <div className="flex justify-between items-center mb-2">
-                  <Typography variant="h6" className="font-medium">Procurement Efficiency</Typography>
-                  <IconButton size="small">
-                    <MoreVertIcon fontSize="small" />
-                  </IconButton>
+                  <h6 className="font-medium">Procurement Efficiency</h6>
+                  <button className="text-sm text-neutral-500">
+                    <MoreIcon />
+                  </button>
                 </div>
-                <Typography variant="body2" className="text-sm text-neutral-500 mb-4">
+                <p className="text-sm text-neutral-500 mb-4">
                   % of orders processed within SLA timeframe
-                </Typography>
+                </p>
                 <div className="h-72">
                   <LineChart 
                     data={procurementEfficiencyData} 
@@ -390,20 +354,20 @@ export const KPIsView: React.FC = () => {
                     height={300}
                   />
                 </div>
-              </Paper>
+              </div>
             </div>
             
             <div className="md:col-span-6">
-              <Paper className="p-4">
+              <div className="p-4">
                 <div className="flex justify-between items-center mb-2">
-                  <Typography variant="h6" className="font-medium">Average Deployment Time</Typography>
-                  <IconButton size="small">
-                    <MoreVertIcon fontSize="small" />
-                  </IconButton>
+                  <h6 className="font-medium">Average Deployment Time</h6>
+                  <button className="text-sm text-neutral-500">
+                    <MoreIcon />
+                  </button>
                 </div>
-                <Typography variant="body2" className="text-sm text-neutral-500 mb-4">
+                <p className="text-sm text-neutral-500 mb-4">
                   Days from order to operational deployment
-                </Typography>
+                </p>
                 <div className="h-72">
                   <LineChart 
                     data={deploymentTimeData} 
@@ -412,26 +376,26 @@ export const KPIsView: React.FC = () => {
                     height={300}
                   />
                 </div>
-              </Paper>
+              </div>
             </div>
           </div>
         </TabPanel>
         
         {/* Procurement Tab */}
         <TabPanel value={tabValue} index={1}>
-          <Typography variant="h6" className="mb-4">Procurement Key Performance Indicators</Typography>
+          <h6 className="mb-4">Procurement Key Performance Indicators</h6>
           <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
             <div className="md:col-span-6">
-              <Paper className="p-4">
+              <div className="p-4">
                 <div className="flex justify-between items-center mb-2">
-                  <Typography variant="h6" className="font-medium">Procurement Efficiency Trend</Typography>
-                  <IconButton size="small">
-                    <MoreVertIcon fontSize="small" />
-                  </IconButton>
+                  <h6 className="font-medium">Procurement Efficiency Trend</h6>
+                  <button className="text-sm text-neutral-500">
+                    <MoreIcon />
+                  </button>
                 </div>
-                <Typography variant="body2" className="text-sm text-neutral-500 mb-4">
+                <p className="text-sm text-neutral-500 mb-4">
                   Percentage of orders processed within SLA timeframe
-                </Typography>
+                </p>
                 <div className="h-72">
                   <LineChart 
                     data={procurementEfficiencyData} 
@@ -440,20 +404,20 @@ export const KPIsView: React.FC = () => {
                     height={300}
                   />
                 </div>
-              </Paper>
+              </div>
             </div>
             
             <div className="md:col-span-6">
-              <Paper className="p-4">
+              <div className="p-4">
                 <div className="flex justify-between items-center mb-2">
-                  <Typography variant="h6" className="font-medium">Inventory Turnover Rate</Typography>
-                  <IconButton size="small">
-                    <MoreVertIcon fontSize="small" />
-                  </IconButton>
+                  <h6 className="font-medium">Inventory Turnover Rate</h6>
+                  <button className="text-sm text-neutral-500">
+                    <MoreIcon />
+                  </button>
                 </div>
-                <Typography variant="body2" className="text-sm text-neutral-500 mb-4">
+                <p className="text-sm text-neutral-500 mb-4">
                   Rate at which inventory is used and replaced
-                </Typography>
+                </p>
                 <div className="h-72">
                   <LineChart 
                     data={inventoryTurnoverData} 
@@ -462,26 +426,26 @@ export const KPIsView: React.FC = () => {
                     height={300}
                   />
                 </div>
-              </Paper>
+              </div>
             </div>
           </div>
         </TabPanel>
         
         {/* Deployment Tab */}
         <TabPanel value={tabValue} index={2}>
-          <Typography variant="h6" className="mb-4">Deployment Key Performance Indicators</Typography>
+          <h6 className="mb-4">Deployment Key Performance Indicators</h6>
           <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
             <div className="md:col-span-6">
-              <Paper className="p-4">
+              <div className="p-4">
                 <div className="flex justify-between items-center mb-2">
-                  <Typography variant="h6" className="font-medium">Deployment Time Trend</Typography>
-                  <IconButton size="small">
-                    <MoreVertIcon fontSize="small" />
-                  </IconButton>
+                  <h6 className="font-medium">Deployment Time Trend</h6>
+                  <button className="text-sm text-neutral-500">
+                    <MoreIcon />
+                  </button>
                 </div>
-                <Typography variant="body2" className="text-sm text-neutral-500 mb-4">
+                <p className="text-sm text-neutral-500 mb-4">
                   Average days from order to operational deployment
-                </Typography>
+                </p>
                 <div className="h-72">
                   <LineChart 
                     data={deploymentTimeData} 
@@ -490,20 +454,20 @@ export const KPIsView: React.FC = () => {
                     height={300}
                   />
                 </div>
-              </Paper>
+              </div>
             </div>
             
             <div className="md:col-span-6">
-              <Paper className="p-4">
+              <div className="p-4">
                 <div className="flex justify-between items-center mb-2">
-                  <Typography variant="h6" className="font-medium">Regional Deployment Times</Typography>
-                  <IconButton size="small">
-                    <MoreVertIcon fontSize="small" />
-                  </IconButton>
+                  <h6 className="font-medium">Regional Deployment Times</h6>
+                  <button className="text-sm text-neutral-500">
+                    <MoreIcon />
+                  </button>
                 </div>
-                <Typography variant="body2" className="text-sm text-neutral-500 mb-4">
+                <p className="text-sm text-neutral-500 mb-4">
                   Average deployment time by region (days)
-                </Typography>
+                </p>
                 <div className="h-72">
                   <BarChart 
                     data={regionalKpiData} 
@@ -512,26 +476,26 @@ export const KPIsView: React.FC = () => {
                     height={300}
                   />
                 </div>
-              </Paper>
+              </div>
             </div>
           </div>
         </TabPanel>
         
         {/* Utilization Tab */}
         <TabPanel value={tabValue} index={3}>
-          <Typography variant="h6" className="mb-4">Utilization Key Performance Indicators</Typography>
+          <h6 className="mb-4">Utilization Key Performance Indicators</h6>
           <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
             <div className="md:col-span-6">
-              <Paper className="p-4">
+              <div className="p-4">
                 <div className="flex justify-between items-center mb-2">
-                  <Typography variant="h6" className="font-medium">Capacity Utilization Trend</Typography>
-                  <IconButton size="small">
-                    <MoreVertIcon fontSize="small" />
-                  </IconButton>
+                  <h6 className="font-medium">Capacity Utilization Trend</h6>
+                  <button className="text-sm text-neutral-500">
+                    <MoreIcon />
+                  </button>
                 </div>
-                <Typography variant="body2" className="text-sm text-neutral-500 mb-4">
+                <p className="text-sm text-neutral-500 mb-4">
                   Percentage of data center capacity being utilized
-                </Typography>
+                </p>
                 <div className="h-72">
                   <LineChart 
                     data={capacityUtilizationData} 
@@ -540,20 +504,20 @@ export const KPIsView: React.FC = () => {
                     height={300}
                   />
                 </div>
-              </Paper>
+              </div>
             </div>
             
             <div className="md:col-span-6">
-              <Paper className="p-4">
+              <div className="p-4">
                 <div className="flex justify-between items-center mb-2">
-                  <Typography variant="h6" className="font-medium">Regional Utilization Rates</Typography>
-                  <IconButton size="small">
-                    <MoreVertIcon fontSize="small" />
-                  </IconButton>
+                  <h6 className="font-medium">Regional Utilization Rates</h6>
+                  <button className="text-sm text-neutral-500">
+                    <MoreIcon />
+                  </button>
                 </div>
-                <Typography variant="body2" className="text-sm text-neutral-500 mb-4">
+                <p className="text-sm text-neutral-500 mb-4">
                   Capacity utilization percentage by region
-                </Typography>
+                </p>
                 <div className="h-72">
                   <BarChart 
                     data={regionalKpiData} 
@@ -562,55 +526,55 @@ export const KPIsView: React.FC = () => {
                     height={300}
                   />
                 </div>
-              </Paper>
+              </div>
             </div>
           </div>
         </TabPanel>
         
         {/* Cost Management Tab */}
         <TabPanel value={tabValue} index={4}>
-          <Typography variant="h6" className="mb-4">Cost Management Key Performance Indicators</Typography>
+          <h6 className="mb-4">Cost Management Key Performance Indicators</h6>
           <div className="flex justify-center items-center h-64">
-            <Typography variant="h6" className="text-neutral-500">
+            <p className="text-neutral-500">
               Cost KPI data will be available in the next update
-            </Typography>
+            </p>
           </div>
         </TabPanel>
-      </Paper>
+      </div>
       
-      <Paper className="p-4">
+      <div className="p-4">
         <div className="flex justify-between items-center mb-4">
-          <Typography variant="h6" className="font-medium">KPI Insights</Typography>
-          <Button variant="text" color="primary">
+          <h6 className="font-medium">KPI Insights</h6>
+          <button className="text-primary-500">
             View All Insights
-          </Button>
+          </button>
         </div>
         <div className="space-y-4">
           <div className="p-3 bg-neutral-50 rounded-lg border border-neutral-200">
-            <Typography variant="subtitle2" className="text-success-700">Procurement Efficiency Improvement</Typography>
-            <Typography variant="body2" className="text-neutral-600">
+            <p className="text-success-700">Procurement Efficiency Improvement</p>
+            <p className="text-neutral-600">
               Procurement efficiency has increased by 6% over the last quarter, exceeding the target by 3%. 
               This is attributed to the implementation of the new automated vendor management system.
-            </Typography>
+            </p>
           </div>
           
           <div className="p-3 bg-neutral-50 rounded-lg border border-neutral-200">
-            <Typography variant="subtitle2" className="text-success-700">Deployment Time Reduction</Typography>
-            <Typography variant="body2" className="text-neutral-600">
+            <p className="text-success-700">Deployment Time Reduction</p>
+            <p className="text-neutral-600">
               Average deployment time has decreased from 18 days to 13 days over the past 6 months, 
               meeting the SLA target of 15 days. Streamlined customs clearance processes have contributed to this improvement.
-            </Typography>
+            </p>
           </div>
           
           <div className="p-3 bg-neutral-50 rounded-lg border border-neutral-200">
-            <Typography variant="subtitle2" className="text-warning-700">Cost Management Alert</Typography>
-            <Typography variant="body2" className="text-neutral-600">
+            <p className="text-warning-700">Cost Management Alert</p>
+            <p className="text-neutral-600">
               APAC region is showing higher-than-expected shipping costs, currently 12% above budget. 
               Recommend reviewing logistics contracts and exploring alternative shipping routes.
-            </Typography>
+            </p>
           </div>
         </div>
-      </Paper>
+      </div>
     </div>
   );
 };
